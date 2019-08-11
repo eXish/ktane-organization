@@ -35,7 +35,7 @@ public class OrganizationScript : MonoBehaviour
     private bool detectionDone = false;
     private bool announceMade = false;
     private bool announceMade2 = false;
-    //these will be usedi n the future when multiple organization support is made
+    //these will be used in the future when multiple organization support is made
     private bool otherOrgs = false;
     private int orgCount = 0;
 
@@ -66,7 +66,7 @@ public class OrganizationScript : MonoBehaviour
                 "Divided Squares",
                 "Cookie Jars",
                 "Turn The Keys",
-                "Forget Then All",
+                "Forget Them All",
                 "Tallordered Keys",
                 "Purgatory",
                 "Forget Us Not",
@@ -321,6 +321,108 @@ public class OrganizationScript : MonoBehaviour
                 }
             }
         }
+        //Moves Number Nimbleness to end of order list
+        int numbercount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Number Nimbleness"))
+            {
+                numbercount++;
+            }
+        }
+        for (int i = 0; i < numbercount; i++)
+        {
+            order.Remove("Number Nimbleness");
+        }
+        for (int i = 0; i < numbercount; i++)
+        {
+            order.Add("Number Nimbleness");
+        }
+        //Moves Bamboozling Button to end of order list
+        int bamBcount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Bamboozling Button"))
+            {
+                bamBcount++;
+            }
+        }
+        for (int i = 0; i < bamBcount; i++)
+        {
+            order.Remove("Bamboozling Button");
+        }
+        for (int i = 0; i < bamBcount; i++)
+        {
+            order.Add("Bamboozling Button");
+        }
+        //Moves The Cube to end of order list
+        int cubecount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("The Cube"))
+            {
+                cubecount++;
+            }
+        }
+        for (int i = 0; i < cubecount; i++)
+        {
+            order.Remove("The Cube");
+        }
+        for (int i = 0; i < cubecount; i++)
+        {
+            order.Add("The Cube");
+        }
+        //Moves The Sphere to end of order list
+        int spherecount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("The Sphere"))
+            {
+                spherecount++;
+            }
+        }
+        for (int i = 0; i < spherecount; i++)
+        {
+            order.Remove("The Sphere");
+        }
+        for (int i = 0; i < spherecount; i++)
+        {
+            order.Add("The Sphere");
+        }
+        //Moves LEGOs to end of order list
+        int legocount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("LEGOs"))
+            {
+                legocount++;
+            }
+        }
+        for (int i = 0; i < legocount; i++)
+        {
+            order.Remove("LEGOs");
+        }
+        for (int i = 0; i < legocount; i++)
+        {
+            order.Add("LEGOs");
+        }
+        //Moves Bamboozled Again to end of order list
+        int bamcount = 0;
+        for(int i = 0; i < order.Count; i++)
+        {
+            if(order.ElementAt(i).Equals("Bamboozled Again"))
+            {
+                bamcount++;
+            }
+        }
+        for (int i = 0; i < bamcount; i++)
+        {
+            order.Remove("Bamboozled Again");
+        }
+        for (int i = 0; i < bamcount; i++)
+        {
+            order.Add("Bamboozled Again");
+        }
         string build;
         if(order.Count != 0)
         {
@@ -391,10 +493,15 @@ public class OrganizationScript : MonoBehaviour
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 7 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
+            else if (bomb.GetBatteryCount() <= 2)
+            {
+                nextSwitch = "Up";
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 8 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+            }
             else
             {
                 nextSwitch = "Down";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 8 (no others true rule) is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 9 (no others true rule) is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
         }
         else if (solved.Count == 2)
@@ -424,10 +531,15 @@ public class OrganizationScript : MonoBehaviour
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 7 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
+            else if (bomb.GetBatteryCount() <= 2)
+            {
+                nextSwitch = "Up";
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 8 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+            }
             else
             {
                 nextSwitch = "Down";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 8 (no others true rule) is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 9 (no others true rule) is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
         }
         else if (solved.Count == 3)
@@ -467,10 +579,15 @@ public class OrganizationScript : MonoBehaviour
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 7 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
+            else if (bomb.GetBatteryCount() <= 2)
+            {
+                nextSwitch = "Up";
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 8 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+            }
             else
             {
                 nextSwitch = "Down";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 8 (no others true rule) is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 9 (no others true rule) is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
         }
         else
@@ -510,10 +627,15 @@ public class OrganizationScript : MonoBehaviour
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 7 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
+            else if (bomb.GetBatteryCount() <= 2)
+            {
+                nextSwitch = "Up";
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 8 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+            }
             else
             {
                 nextSwitch = "Down";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 8 (no others true rule) is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 9 (no others true rule) is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
         }
     }
