@@ -406,6 +406,23 @@ public class OrganizationScript : MonoBehaviour
         {
             order.Add("LEGOs");
         }
+        //Moves Ultimate Cipher to end of order list
+        int ciphercount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Ultimate Cipher"))
+            {
+                ciphercount++;
+            }
+        }
+        for (int i = 0; i < ciphercount; i++)
+        {
+            order.Remove("Ultimate Cipher");
+        }
+        for (int i = 0; i < ciphercount; i++)
+        {
+            order.Add("Ultimate Cipher");
+        }
         //Moves Bamboozled Again to end of order list
         int bamcount = 0;
         for(int i = 0; i < order.Count; i++)
