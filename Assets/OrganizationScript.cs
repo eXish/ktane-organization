@@ -321,6 +321,40 @@ public class OrganizationScript : MonoBehaviour
                 }
             }
         }
+        //Moves Turtle Robot to end of order list
+        int robotcount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Turtle Robot"))
+            {
+                robotcount++;
+            }
+        }
+        for (int i = 0; i < robotcount; i++)
+        {
+            order.Remove("Turtle Robot");
+        }
+        for (int i = 0; i < robotcount; i++)
+        {
+            order.Add("Turtle Robot");
+        }
+        //Moves Lightspeed to end of order list
+        int lightcount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Lightspeed"))
+            {
+                lightcount++;
+            }
+        }
+        for (int i = 0; i < lightcount; i++)
+        {
+            order.Remove("Lightspeed");
+        }
+        for (int i = 0; i < lightcount; i++)
+        {
+            order.Add("Lightspeed");
+        }
         //Moves Number Nimbleness to end of order list
         int numbercount = 0;
         for (int i = 0; i < order.Count; i++)
@@ -337,6 +371,108 @@ public class OrganizationScript : MonoBehaviour
         for (int i = 0; i < numbercount; i++)
         {
             order.Add("Number Nimbleness");
+        }
+        //Moves Bomb Diffusal to end of order list
+        int diffusalcount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Bomb Diffusal"))
+            {
+                diffusalcount++;
+            }
+        }
+        for (int i = 0; i < diffusalcount; i++)
+        {
+            order.Remove("Bomb Diffusal");
+        }
+        for (int i = 0; i < diffusalcount; i++)
+        {
+            order.Add("Bomb Diffusal");
+        }
+        //Moves Old Fogey to end of order list
+        int fogeycount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Old Fogey"))
+            {
+                fogeycount++;
+            }
+        }
+        for (int i = 0; i < fogeycount; i++)
+        {
+            order.Remove("Old Fogey");
+        }
+        for (int i = 0; i < fogeycount; i++)
+        {
+            order.Add("Old Fogey");
+        }
+        //Moves Game of Life Cruel to end of order list
+        int gofcount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Game of Life Cruel"))
+            {
+                gofcount++;
+            }
+        }
+        for (int i = 0; i < gofcount; i++)
+        {
+            order.Remove("Game of Life Cruel");
+        }
+        for (int i = 0; i < gofcount; i++)
+        {
+            order.Add("Game of Life Cruel");
+        }
+        //Moves Mastermind Cruel to end of order list
+        int mccount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Mastermind Cruel"))
+            {
+                mccount++;
+            }
+        }
+        for (int i = 0; i < mccount; i++)
+        {
+            order.Remove("Mastermind Cruel");
+        }
+        for (int i = 0; i < mccount; i++)
+        {
+            order.Add("Mastermind Cruel");
+        }
+        //Moves The Hypercube to end of order list
+        int hypercount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("The Hypercube"))
+            {
+                hypercount++;
+            }
+        }
+        for (int i = 0; i < hypercount; i++)
+        {
+            order.Remove("The Hypercube");
+        }
+        for (int i = 0; i < hypercount; i++)
+        {
+            order.Add("The Hypercube");
+        }
+        //Moves The Ultracube to end of order list
+        int ultracount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("The Ultracube"))
+            {
+                ultracount++;
+            }
+        }
+        for (int i = 0; i < ultracount; i++)
+        {
+            order.Remove("The Ultracube");
+        }
+        for (int i = 0; i < ultracount; i++)
+        {
+            order.Add("The Ultracube");
         }
         //Moves Bamboozling Button to end of order list
         int bamBcount = 0;
