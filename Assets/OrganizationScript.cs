@@ -321,6 +321,23 @@ public class OrganizationScript : MonoBehaviour
                 }
             }
         }
+        //Moves The Jewel Vault to end of order list
+        int jewelcount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("The Jewel Vault"))
+            {
+                jewelcount++;
+            }
+        }
+        for (int i = 0; i < jewelcount; i++)
+        {
+            order.Remove("The Jewel Vault");
+        }
+        for (int i = 0; i < jewelcount; i++)
+        {
+            order.Add("The Jewel Vault");
+        }
         //Moves Turtle Robot to end of order list
         int robotcount = 0;
         for (int i = 0; i < order.Count; i++)
@@ -372,6 +389,23 @@ public class OrganizationScript : MonoBehaviour
         {
             order.Add("Number Nimbleness");
         }
+        //Moves 3D Maze to end of order list
+        int tdcount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("3D Maze"))
+            {
+                tdcount++;
+            }
+        }
+        for (int i = 0; i < tdcount; i++)
+        {
+            order.Remove("3D Maze");
+        }
+        for (int i = 0; i < tdcount; i++)
+        {
+            order.Add("3D Maze");
+        }
         //Moves Bomb Diffusal to end of order list
         int diffusalcount = 0;
         for (int i = 0; i < order.Count; i++)
@@ -405,6 +439,57 @@ public class OrganizationScript : MonoBehaviour
         for (int i = 0; i < fogeycount; i++)
         {
             order.Add("Old Fogey");
+        }
+        //Moves Button Grid to end of order list
+        int gridcount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Button Grid"))
+            {
+                gridcount++;
+            }
+        }
+        for (int i = 0; i < gridcount; i++)
+        {
+            order.Remove("Button Grid");
+        }
+        for (int i = 0; i < gridcount; i++)
+        {
+            order.Add("Button Grid");
+        }
+        //Moves Simon Sings to end of order list
+        int singscount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Simon Sings"))
+            {
+                singscount++;
+            }
+        }
+        for (int i = 0; i < singscount; i++)
+        {
+            order.Remove("Simon Sings");
+        }
+        for (int i = 0; i < singscount; i++)
+        {
+            order.Add("Simon Sings");
+        }
+        //Moves Vectors to end of order list
+        int vectorcount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Vectors"))
+            {
+                vectorcount++;
+            }
+        }
+        for (int i = 0; i < vectorcount; i++)
+        {
+            order.Remove("Vectors");
+        }
+        for (int i = 0; i < vectorcount; i++)
+        {
+            order.Add("Vectors");
         }
         //Moves Game of Life Cruel to end of order list
         int gofcount = 0;
@@ -440,6 +525,23 @@ public class OrganizationScript : MonoBehaviour
         {
             order.Add("Mastermind Cruel");
         }
+        //Moves Simon Sends to end of order list
+        int sendscount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Simon Sends"))
+            {
+                sendscount++;
+            }
+        }
+        for (int i = 0; i < sendscount; i++)
+        {
+            order.Remove("Simon Sends");
+        }
+        for (int i = 0; i < sendscount; i++)
+        {
+            order.Add("Simon Sends");
+        }
         //Moves The Hypercube to end of order list
         int hypercount = 0;
         for (int i = 0; i < order.Count; i++)
@@ -474,6 +576,23 @@ public class OrganizationScript : MonoBehaviour
         {
             order.Add("The Ultracube");
         }
+        //Moves Lombax Cubes to end of order list
+        int lombcount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Lombax Cubes"))
+            {
+                lombcount++;
+            }
+        }
+        for (int i = 0; i < lombcount; i++)
+        {
+            order.Remove("Lombax Cubes");
+        }
+        for (int i = 0; i < lombcount; i++)
+        {
+            order.Add("Lombax Cubes");
+        }
         //Moves Bamboozling Button to end of order list
         int bamBcount = 0;
         for (int i = 0; i < order.Count; i++)
@@ -490,6 +609,23 @@ public class OrganizationScript : MonoBehaviour
         for (int i = 0; i < bamBcount; i++)
         {
             order.Add("Bamboozling Button");
+        }
+        //Moves Simon Stores to end of order list
+        int storescount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Simon Stores"))
+            {
+                storescount++;
+            }
+        }
+        for (int i = 0; i < storescount; i++)
+        {
+            order.Remove("Simon Stores");
+        }
+        for (int i = 0; i < storescount; i++)
+        {
+            order.Add("Simon Stores");
         }
         //Moves The Cube to end of order list
         int cubecount = 0;
@@ -541,6 +677,23 @@ public class OrganizationScript : MonoBehaviour
         for (int i = 0; i < legocount; i++)
         {
             order.Add("LEGOs");
+        }
+        //Moves Unfair Cipher to end of order list
+        int unfaircount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Unfair Cipher"))
+            {
+                unfaircount++;
+            }
+        }
+        for (int i = 0; i < unfaircount; i++)
+        {
+            order.Remove("Unfair Cipher");
+        }
+        for (int i = 0; i < unfaircount; i++)
+        {
+            order.Add("Unfair Cipher");
         }
         //Moves Ultimate Cipher to end of order list
         int ciphercount = 0;
