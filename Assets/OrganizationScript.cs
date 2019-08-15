@@ -25,7 +25,17 @@ public class OrganizationScript : MonoBehaviour
     private string nextSwitch;
     private string currentSwitch;
 
+    sealed class OrgBombInfo
+    {
+        public List<OrganizationScript> Modules = new List<OrganizationScript>();
+    }
+
+    private static readonly Dictionary<string, OrgBombInfo> _infos = new Dictionary<string, OrgBombInfo>();
+
+    private OrgBombInfo info;
+
     public GameObject module;
+    public GameObject arrow;
 
     static int moduleIdCounter = 1;
     int moduleId;
@@ -35,7 +45,6 @@ public class OrganizationScript : MonoBehaviour
     private bool detectionDone = false;
     private bool announceMade = false;
     private bool announceMade2 = false;
-    //these will be used in the future when multiple organization support is made
     private bool otherOrgs = false;
     private int orgCount = 0;
 
@@ -76,6 +85,12 @@ public class OrganizationScript : MonoBehaviour
 
     void Start()
     {
+        arrow.GetComponent<Renderer>().enabled = false;
+        var serialNumber = bomb.GetSerialNumber();
+        if (!_infos.ContainsKey(serialNumber))
+            _infos[serialNumber] = new OrgBombInfo();
+        info = _infos[serialNumber];
+        info.Modules.Add(this);
         generateOrder();
         if(bomb.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count() == 0)
         {
@@ -113,73 +128,197 @@ public class OrganizationScript : MonoBehaviour
                     else
                     {
                         Debug.LogFormat("[Organization #{0}] ---------------------------------------------------", moduleId);
-                        if (name.Equals(order.ElementAt(0)) && (readyForInput == false))
+                        if (otherOrgs == true)
                         {
-                            solved.Add(order.ElementAt(0));
-                            order.RemoveAt(0);
-                            readyForInput = true;
-                            Debug.LogFormat("[Organization #{0}] '{1}' has been solved! Ready for next module...", moduleId, name);
-                            getNewSwitchPos();
-                        }
-                        else if (readyForInput == true)
-                        {
-                            Debug.LogFormat("[Organization #{0}] '{1}' has been solved and the module needs to be manually given the next module in order to continue! Strike! Removing from future possibilities...", moduleId, name);
-                            bomb.GetComponent<KMBombModule>().HandleStrike();
-                            audio.GetComponent<KMAudio>().PlaySoundAtTransform("order", transform);
-                            solved.Add(name);
-                            order.Remove(name);
-                            string build;
-                            if (order.Count != 0)
+                            if (readyForInput == true)
                             {
-                                build = "[Organization #{0}] The new order of the non-ignored modules has now been determined as: ";
-                            }
-                            else
-                            {
-                                build = "[Organization #{0}] The new order of the non-ignored modules has now been determined as: none";
-                            }
-                            for (int i = 0; i < order.Count; i++)
-                            {
-                                if (i == (order.Count - 1))
+                                Debug.LogFormat("[Organization #{0}] '{1}' has been solved and this Organization needs to be manually given the next module in order to continue! Strike! Removing from future possibilities...", moduleId, name);
+                                bomb.GetComponent<KMBombModule>().HandleStrike();
+                                audio.GetComponent<KMAudio>().PlaySoundAtTransform("order", transform);
+                                solved.Add(name);
+                                order.Remove(name);
+                                string build;
+                                if (order.Count != 0)
                                 {
-                                    build += order.ElementAt(i);
+                                    build = "[Organization #{0}] The new order of the non-ignored modules has now been determined as: ";
                                 }
                                 else
                                 {
-                                    build += (order.ElementAt(i) + ", ");
+                                    build = "[Organization #{0}] The new order of the non-ignored modules has now been determined as: none";
+                                }
+                                for (int i = 0; i < order.Count; i++)
+                                {
+                                    if (i == (order.Count - 1))
+                                    {
+                                        build += order.ElementAt(i);
+                                    }
+                                    else
+                                    {
+                                        build += (order.ElementAt(i) + ", ");
+                                    }
+                                }
+                                Debug.LogFormat(build, moduleId);
+                                getNewSwitchPos();
+                            }
+                            else
+                            {
+                                List<string> displayed = new List<string>();
+                                List<bool> ready = new List<bool>();
+                                foreach (OrganizationScript mod in info.Modules)
+                                {
+                                    displayed.Add(mod.module.GetComponent<Text>().text);
+                                    ready.Add(mod.readyForInput);
+                                }
+                                List<string> nrdisplayed = new List<string>();
+                                for(int i = 0; i < displayed.Count; i++)
+                                {
+                                    if(ready.ElementAt(i) == false)
+                                    {
+                                        nrdisplayed.Add(displayed.ElementAt(i));
+                                    }
+                                }
+                                if (nrdisplayed.Contains(name))
+                                {
+                                    if (name.Equals(order.ElementAt(0)))
+                                    {
+                                        solved.Add(order.ElementAt(0));
+                                        order.RemoveAt(0);
+                                        StartCoroutine(readyUpDelayed());
+                                        arrow.GetComponent<Renderer>().enabled = true;
+                                        Debug.LogFormat("[Organization #{0}] '{1}' has been solved for this Organization! Ready for next module...", moduleId, name);
+                                        getNewSwitchPos();
+                                    }
+                                    else
+                                    {
+                                        Debug.LogFormat("[Organization #{0}] '{1}' has been solved and it was the next module on a different Organization! Removing from future possibilities on this Organization...", moduleId, name);
+                                        solved.Add(name);
+                                        order.Remove(name);
+                                        string build;
+                                        if (order.Count != 0)
+                                        {
+                                            build = "[Organization #{0}] The new order of the non-ignored modules has now been determined as: ";
+                                        }
+                                        else
+                                        {
+                                            build = "[Organization #{0}] The new order of the non-ignored modules has now been determined as: none";
+                                        }
+                                        for (int i = 0; i < order.Count; i++)
+                                        {
+                                            if (i == (order.Count - 1))
+                                            {
+                                                build += order.ElementAt(i);
+                                            }
+                                            else
+                                            {
+                                                build += (order.ElementAt(i) + ", ");
+                                            }
+                                        }
+                                        Debug.LogFormat(build, moduleId);
+                                        getNewSwitchPos();
+                                    }
+                                }
+                                else
+                                {
+                                    Debug.LogFormat("[Organization #{0}] '{1}' has been solved and it was not the next module on ANY Organization! Strike! Removing from future possibilities...", moduleId, name);
+                                    bomb.GetComponent<KMBombModule>().HandleStrike();
+                                    audio.GetComponent<KMAudio>().PlaySoundAtTransform("order", transform);
+                                    solved.Add(name);
+                                    order.Remove(name);
+                                    string build;
+                                    if (order.Count != 0)
+                                    {
+                                        build = "[Organization #{0}] The new order of the non-ignored modules has now been determined as: ";
+                                    }
+                                    else
+                                    {
+                                        build = "[Organization #{0}] The new order of the non-ignored modules has now been determined as: none";
+                                    }
+                                    for (int i = 0; i < order.Count; i++)
+                                    {
+                                        if (i == (order.Count - 1))
+                                        {
+                                            build += order.ElementAt(i);
+                                        }
+                                        else
+                                        {
+                                            build += (order.ElementAt(i) + ", ");
+                                        }
+                                    }
+                                    Debug.LogFormat(build, moduleId);
+                                    getNewSwitchPos();
                                 }
                             }
-                            Debug.LogFormat(build, moduleId);
-                            getNewSwitchPos();
                         }
                         else
                         {
-                            Debug.LogFormat("[Organization #{0}] '{1}' has been solved and it was not the next module! Strike! Removing from future possibilities...", moduleId, name);
-                            bomb.GetComponent<KMBombModule>().HandleStrike();
-                            audio.GetComponent<KMAudio>().PlaySoundAtTransform("order", transform);
-                            solved.Add(name);
-                            order.Remove(name);
-                            string build;
-                            if (order.Count != 0)
+                            if (name.Equals(order.ElementAt(0)) && (readyForInput == false))
                             {
-                                build = "[Organization #{0}] The new order of the non-ignored modules has now been determined as: ";
+                                solved.Add(order.ElementAt(0));
+                                order.RemoveAt(0);
+                                readyForInput = true;
+                                Debug.LogFormat("[Organization #{0}] '{1}' has been solved! Ready for next module...", moduleId, name);
+                                getNewSwitchPos();
                             }
-                            else
+                            else if (readyForInput == true)
                             {
-                                build = "[Organization #{0}] The new order of the non-ignored modules has now been determined as: none";
-                            }
-                            for (int i = 0; i < order.Count; i++)
-                            {
-                                if (i == (order.Count - 1))
+                                Debug.LogFormat("[Organization #{0}] '{1}' has been solved and the module needs to be manually given the next module in order to continue! Strike! Removing from future possibilities...", moduleId, name);
+                                bomb.GetComponent<KMBombModule>().HandleStrike();
+                                audio.GetComponent<KMAudio>().PlaySoundAtTransform("order", transform);
+                                solved.Add(name);
+                                order.Remove(name);
+                                string build;
+                                if (order.Count != 0)
                                 {
-                                    build += order.ElementAt(i);
+                                    build = "[Organization #{0}] The new order of the non-ignored modules has now been determined as: ";
                                 }
                                 else
                                 {
-                                    build += (order.ElementAt(i) + ", ");
+                                    build = "[Organization #{0}] The new order of the non-ignored modules has now been determined as: none";
                                 }
+                                for (int i = 0; i < order.Count; i++)
+                                {
+                                    if (i == (order.Count - 1))
+                                    {
+                                        build += order.ElementAt(i);
+                                    }
+                                    else
+                                    {
+                                        build += (order.ElementAt(i) + ", ");
+                                    }
+                                }
+                                Debug.LogFormat(build, moduleId);
+                                getNewSwitchPos();
                             }
-                            Debug.LogFormat(build, moduleId);
-                            getNewSwitchPos();
+                            else
+                            {
+                                Debug.LogFormat("[Organization #{0}] '{1}' has been solved and it was not the next module! Strike! Removing from future possibilities...", moduleId, name);
+                                bomb.GetComponent<KMBombModule>().HandleStrike();
+                                audio.GetComponent<KMAudio>().PlaySoundAtTransform("order", transform);
+                                solved.Add(name);
+                                order.Remove(name);
+                                string build;
+                                if (order.Count != 0)
+                                {
+                                    build = "[Organization #{0}] The new order of the non-ignored modules has now been determined as: ";
+                                }
+                                else
+                                {
+                                    build = "[Organization #{0}] The new order of the non-ignored modules has now been determined as: none";
+                                }
+                                for (int i = 0; i < order.Count; i++)
+                                {
+                                    if (i == (order.Count - 1))
+                                    {
+                                        build += order.ElementAt(i);
+                                    }
+                                    else
+                                    {
+                                        build += (order.ElementAt(i) + ", ");
+                                    }
+                                }
+                                Debug.LogFormat(build, moduleId);
+                                getNewSwitchPos();
+                            }
                         }
                     }
                 }
@@ -200,6 +339,10 @@ public class OrganizationScript : MonoBehaviour
                     if (currentSwitch.Equals(nextSwitch))
                     {
                         readyForInput = false;
+                        if(otherOrgs == true)
+                        {
+                            arrow.GetComponent<Renderer>().enabled = false;
+                        }
                         if (order.Count == 0)
                         {
                             Debug.LogFormat("[Organization #{0}] All non-ignored modules solved! GG!", moduleId);
@@ -289,13 +432,12 @@ public class OrganizationScript : MonoBehaviour
                     if(orgCount > 1 && announceMade == false)
                     {
                         otherOrgs = true;
-                        //Debug.LogFormat("[Organization #{0}] Other Organizations detected! Making sure to only strike for what is not on display on ANY of the Organizations!", moduleId);
-                        Debug.LogFormat("[Organization #{0}] Other Organizations detected! Autosolving!", moduleId);
+                        Debug.LogFormat("[Organization #{0}] Other Organizations detected! Making sure to only strike for what is not on display on ANY of the Organizations!", moduleId);
+                        /**Debug.LogFormat("[Organization #{0}] Other Organizations detected! Autosolving!", moduleId);
                         module.GetComponent<Text>().text = "That's Unfortunate :(";
                         bomb.GetComponent<KMBombModule>().HandlePass();
-                        moduleSolved = true;
+                        moduleSolved = true;*/
                         announceMade = true;
-                        return;
                     }
                 }
                 remove.Add(order.ElementAt(i));
@@ -751,6 +893,13 @@ public class OrganizationScript : MonoBehaviour
             }
         }
         Debug.LogFormat(build, moduleId);
+    }
+
+    private IEnumerator readyUpDelayed()
+    {
+        yield return new WaitForSeconds(1.0f);
+        readyForInput = true;
+        StopCoroutine("readyUpDelayed");
     }
 
     private string getLatestSolve(List<string> s, List<string> s2)
