@@ -774,78 +774,73 @@ public class OrganizationScript : MonoBehaviour
         }
         else if (solved.Count == 1)
         {
-            if (solved.ElementAt(solved.Count - 1).Equals("DetoNATO"))
+            if (vowelCount(solved.ElementAt(solved.Count - 1)) % 2 == 0)
             {
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 2 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(solved.Count - 1).Equals("The London Underground") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
+            else if (solved.ElementAt(solved.Count - 1).Equals("DetoNATO") || solved.ElementAt(solved.Count - 1).Equals("The London Underground") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
             {
                 nextSwitch = "Up";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 3 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(0).Equals("3D Tunnels"))
-            {
-                nextSwitch = "Down";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 5 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
-            }
             else if (bomb.IsIndicatorPresent("SND"))
             {
                 nextSwitch = "Up";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 6 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 5 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
             else if (bomb.GetModuleNames().Contains("Forget This"))
             {
                 nextSwitch = "Down";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 7 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 6 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
             else if (bomb.GetBatteryCount() <= 2)
             {
                 nextSwitch = "Up";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 8 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 7 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
             else
             {
                 nextSwitch = "Down";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 9 (no others true rule) is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 8 (no others true rule) is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
         }
         else if (solved.Count == 2)
         {
-            if (solved.ElementAt(solved.Count - 1).Equals("DetoNATO"))
+            if (vowelCount(solved.ElementAt(solved.Count - 1)) % 2 == 0)
             {
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 2 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(solved.Count - 1).Equals("The London Underground") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
+            else if (solved.ElementAt(solved.Count - 1).Equals("DetoNATO") || solved.ElementAt(solved.Count - 1).Equals("The London Underground") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
             {
                 nextSwitch = "Up";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 3 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(0).Equals("3D Tunnels") || solved.ElementAt(1).Equals("3D Tunnels"))
+            else if (solved.ElementAt(solved.Count - 2).StartsWith("S"))
             {
                 nextSwitch = "Down";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 5 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 4 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
             else if (bomb.IsIndicatorPresent("SND"))
             {
                 nextSwitch = "Up";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 6 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 5 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
             else if (bomb.GetModuleNames().Contains("Forget This"))
             {
                 nextSwitch = "Down";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 7 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 6 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
             else if (bomb.GetBatteryCount() <= 2)
             {
                 nextSwitch = "Up";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 8 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 7 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
             else
             {
                 nextSwitch = "Down";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 9 (no others true rule) is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 8 (no others true rule) is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
         }
         else if (solved.Count == 3)
@@ -855,45 +850,40 @@ public class OrganizationScript : MonoBehaviour
         }
         else if (solved.Count == 4)
         {
-            if (solved.ElementAt(solved.Count - 1).Equals("DetoNATO"))
+            if (vowelCount(solved.ElementAt(solved.Count - 1)) % 2 == 0)
             {
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 2 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(solved.Count - 1).Equals("The London Underground") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
+            else if (solved.ElementAt(solved.Count - 1).Equals("DetoNATO") || solved.ElementAt(solved.Count - 1).Equals("The London Underground") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
             {
                 nextSwitch = "Up";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 3 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(2).Equals("Alphabet"))
+            else if (solved.ElementAt(solved.Count - 2).StartsWith("S"))
             {
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 4 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(0).Equals("3D Tunnels") || solved.ElementAt(1).Equals("3D Tunnels"))
-            {
-                nextSwitch = "Down";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 5 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
-            }
             else if (bomb.IsIndicatorPresent("SND"))
             {
                 nextSwitch = "Up";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 6 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 5 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
             else if (bomb.GetModuleNames().Contains("Forget This"))
             {
                 nextSwitch = "Down";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 7 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 6 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
             else if (bomb.GetBatteryCount() <= 2)
             {
                 nextSwitch = "Up";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 8 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 7 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
             else
             {
                 nextSwitch = "Down";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 9 (no others true rule) is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 8 (no others true rule) is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
         }
         else
@@ -903,47 +893,57 @@ public class OrganizationScript : MonoBehaviour
                 nextSwitch = "Up";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 1 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(solved.Count - 1).Equals("DetoNATO"))
+            else if (vowelCount(solved.ElementAt(solved.Count - 1)) % 2 == 0)
             {
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 2 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(solved.Count - 1).Equals("The London Underground") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
+            else if (solved.ElementAt(solved.Count - 1).Equals("DetoNATO") || solved.ElementAt(solved.Count - 1).Equals("The London Underground") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
             {
                 nextSwitch = "Up";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 3 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(2).Equals("Alphabet") || solved.ElementAt(4).Equals("Alphabet"))
+            else if (solved.ElementAt(solved.Count - 2).StartsWith("S"))
             {
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 4 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(0).Equals("3D Tunnels") || solved.ElementAt(1).Equals("3D Tunnels"))
-            {
-                nextSwitch = "Down";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 5 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
-            }
             else if (bomb.IsIndicatorPresent("SND"))
             {
                 nextSwitch = "Up";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 6 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 5 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
             else if (bomb.GetModuleNames().Contains("Forget This"))
             {
                 nextSwitch = "Down";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 7 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 6 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
             else if (bomb.GetBatteryCount() <= 2)
             {
                 nextSwitch = "Up";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 8 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 7 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
             else
             {
                 nextSwitch = "Down";
-                Debug.LogFormat("[Organization #{0}] Switch Table Rule 9 (no others true rule) is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 8 (no others true rule) is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
         }
+    }
+
+    private int vowelCount(string s)
+    {
+        int vowcount = 0;
+        char[] vowels = { 'A','E','O','I','U' };
+        s = s.ToUpper();
+        for(int i = 0; i < s.Length; i++)
+        {
+            if (vowels.Contains(s.ElementAt(i)))
+            {
+                vowcount++;
+            }
+        }
+        return vowcount;
     }
 
     private IEnumerator downSwitch()
