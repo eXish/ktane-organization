@@ -548,6 +548,23 @@ public class OrganizationScript : MonoBehaviour
         {
             order.Add("3D Maze");
         }
+        //Moves 3D Tunnels to end of order list
+        int tuncount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("3D Tunnels"))
+            {
+                tuncount++;
+            }
+        }
+        for (int i = 0; i < tuncount; i++)
+        {
+            order.Remove("3D Tunnels");
+        }
+        for (int i = 0; i < tuncount; i++)
+        {
+            order.Add("3D Tunnels");
+        }
         //Moves Bomb Diffusal to end of order list
         int diffusalcount = 0;
         for (int i = 0; i < order.Count; i++)
@@ -564,6 +581,23 @@ public class OrganizationScript : MonoBehaviour
         for (int i = 0; i < diffusalcount; i++)
         {
             order.Add("Bomb Diffusal");
+        }
+        //Moves Kudosudoku to end of order list
+        int kudocount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Kudosudoku"))
+            {
+                kudocount++;
+            }
+        }
+        for (int i = 0; i < kudocount; i++)
+        {
+            order.Remove("Kudosudoku");
+        }
+        for (int i = 0; i < kudocount; i++)
+        {
+            order.Add("Kudosudoku");
         }
         //Moves Old Fogey to end of order list
         int fogeycount = 0;
@@ -598,6 +632,74 @@ public class OrganizationScript : MonoBehaviour
         for (int i = 0; i < gridcount; i++)
         {
             order.Add("Button Grid");
+        }
+        //Moves Reordered Keys to end of order list
+        int reordcount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Reordered Keys"))
+            {
+                reordcount++;
+            }
+        }
+        for (int i = 0; i < reordcount; i++)
+        {
+            order.Remove("Reordered Keys");
+        }
+        for (int i = 0; i < reordcount; i++)
+        {
+            order.Add("Reordered Keys");
+        }
+        //Moves Misordered Keys to end of order list
+        int misordcount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Misordered Keys"))
+            {
+                misordcount++;
+            }
+        }
+        for (int i = 0; i < misordcount; i++)
+        {
+            order.Remove("Misordered Keys");
+        }
+        for (int i = 0; i < misordcount; i++)
+        {
+            order.Add("Misordered Keys");
+        }
+        //Moves Recorded Keys to end of order list
+        int recordcount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Recorded Keys"))
+            {
+                recordcount++;
+            }
+        }
+        for (int i = 0; i < recordcount; i++)
+        {
+            order.Remove("Recorded Keys");
+        }
+        for (int i = 0; i < recordcount; i++)
+        {
+            order.Add("Recorded Keys");
+        }
+        //Moves Disordered Keys to end of order list
+        int disordcount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Disordered Keys"))
+            {
+                disordcount++;
+            }
+        }
+        for (int i = 0; i < disordcount; i++)
+        {
+            order.Remove("Disordered Keys");
+        }
+        for (int i = 0; i < disordcount; i++)
+        {
+            order.Add("Disordered Keys");
         }
         //Moves Simon Sings to end of order list
         int singscount = 0;
@@ -803,6 +905,23 @@ public class OrganizationScript : MonoBehaviour
         {
             order.Add("The Sphere");
         }
+        //Moves Ten-Button Color Code to end of order list
+        int tenbutcount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Ten-Button Color Code"))
+            {
+                tenbutcount++;
+            }
+        }
+        for (int i = 0; i < tenbutcount; i++)
+        {
+            order.Remove("Ten-Button Color Code");
+        }
+        for (int i = 0; i < tenbutcount; i++)
+        {
+            order.Add("Ten-Button Color Code");
+        }
         //Moves LEGOs to end of order list
         int legocount = 0;
         for (int i = 0; i < order.Count; i++)
@@ -836,6 +955,23 @@ public class OrganizationScript : MonoBehaviour
         for (int i = 0; i < unfaircount; i++)
         {
             order.Add("Unfair Cipher");
+        }
+        //Moves Ultimate Cycle to end of order list
+        int cyclecount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Ultimate Cycle"))
+            {
+                cyclecount++;
+            }
+        }
+        for (int i = 0; i < cyclecount; i++)
+        {
+            order.Remove("Ultimate Cycle");
+        }
+        for (int i = 0; i < cyclecount; i++)
+        {
+            order.Add("Ultimate Cycle");
         }
         //Moves Ultimate Cipher to end of order list
         int ciphercount = 0;
@@ -923,15 +1059,20 @@ public class OrganizationScript : MonoBehaviour
         }
         else if (solved.Count == 1)
         {
-            if (vowelCount(solved.ElementAt(solved.Count - 1)) % 2 == 0)
+            if (vowelCount(module.GetComponent<Text>().text) % 2 == 0)
             {
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 2 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(solved.Count - 1).Equals("DetoNATO") || solved.ElementAt(solved.Count - 1).Equals("The London Underground") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
+            else if (solved.ElementAt(solved.Count - 1).Equals("The Digit") || solved.ElementAt(solved.Count - 1).Equals("Mega Man 2") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
             {
                 nextSwitch = "Up";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 3 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
+            }
+            else if (module.GetComponent<Text>().text.StartsWith("S"))
+            {
+                nextSwitch = "Down";
+                Debug.LogFormat("[Organization #{0}] Switch Table Rule 4 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
             else if (bomb.IsIndicatorPresent("SND"))
             {
@@ -956,17 +1097,17 @@ public class OrganizationScript : MonoBehaviour
         }
         else if (solved.Count == 2)
         {
-            if (vowelCount(solved.ElementAt(solved.Count - 1)) % 2 == 0)
+            if (vowelCount(module.GetComponent<Text>().text) % 2 == 0)
             {
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 2 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(solved.Count - 1).Equals("DetoNATO") || solved.ElementAt(solved.Count - 1).Equals("The London Underground") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
+            else if (solved.ElementAt(solved.Count - 1).Equals("The Digit") || solved.ElementAt(solved.Count - 1).Equals("Mega Man 2") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
             {
                 nextSwitch = "Up";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 3 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(solved.Count - 2).StartsWith("S"))
+            else if (module.GetComponent<Text>().text.StartsWith("S"))
             {
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 4 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
@@ -999,17 +1140,17 @@ public class OrganizationScript : MonoBehaviour
         }
         else if (solved.Count == 4)
         {
-            if (vowelCount(solved.ElementAt(solved.Count - 1)) % 2 == 0)
+            if (vowelCount(module.GetComponent<Text>().text) % 2 == 0)
             {
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 2 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(solved.Count - 1).Equals("DetoNATO") || solved.ElementAt(solved.Count - 1).Equals("The London Underground") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
+            else if (solved.ElementAt(solved.Count - 1).Equals("The Digit") || solved.ElementAt(solved.Count - 1).Equals("Mega Man 2") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
             {
                 nextSwitch = "Up";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 3 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(solved.Count - 2).StartsWith("S"))
+            else if (module.GetComponent<Text>().text.StartsWith("S"))
             {
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 4 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
@@ -1042,17 +1183,17 @@ public class OrganizationScript : MonoBehaviour
                 nextSwitch = "Up";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 1 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (vowelCount(solved.ElementAt(solved.Count - 1)) % 2 == 0)
+            else if (vowelCount(module.GetComponent<Text>().text) % 2 == 0)
             {
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 2 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(solved.Count - 1).Equals("DetoNATO") || solved.ElementAt(solved.Count - 1).Equals("The London Underground") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
+            else if (solved.ElementAt(solved.Count - 1).Equals("The Digit") || solved.ElementAt(solved.Count - 1).Equals("Mega Man 2") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
             {
                 nextSwitch = "Up";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 3 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(solved.Count - 2).StartsWith("S"))
+            else if (module.GetComponent<Text>().text.StartsWith("S"))
             {
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 4 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);

@@ -11,7 +11,7 @@
         <script src="js/ktane-utils.js"></script>
 		<style>
 			.index {
-				column-count: 2;
+				column-count: 3;
 			}
 		</style>
     </head>
@@ -27,8 +27,6 @@
                         <img src="img/Component/Organization.svg" class="diagram">
                         <h2>On the Subject of Organization</h2>
                         <p class="flavour-text">Order! Order! Order!</p>
-                        
-						<p><strong>WARNING! WARNING! This is a Boss Module! This means that it depends on either solves or a timer and if anything is done wrong it can seriously screw with your bomb, you have been warned...</strong></p>
 						
                         <p>This module has a notebook themed display which shows a module's name. It also has a switch towards the top right and a button that says "Continue?" in the bottom left.</p>
 						
@@ -39,8 +37,8 @@
 						<p>In the case of Multiple Organizations...</p>
 						<ul>
 							<li>Any module on any Organization's notebook display can be solved without penalty (except for the cases below)</li>
-							<li>If any Organization needs their button pressed (signified by an arrow on the bottom of the notebook display if there is multiple Organizations) like with 1 Organization a solve before this button is pressed after 1 has already occured will cause a strike to be recorded</li>
-							<li>If any Organization that doesn't need their button pressed doesn't have the name of the module just solved on display then ALL Organizations in this state will record a strike</li>
+							<li>If any Organization has an arrow at the bottom of its notebook display (which appears after a correct solve) and a module is solved it will cause a strike to be recorded</li>
+							<li>If a module is solved and all Organizations without an arrow DON'T currently display that solved module ALL Organizations without an arrow will cause a strike</li>
 						</ul>
                     </div>
                    <div class="page-footer relative-footer">Page 1 of 3</div>
@@ -63,14 +61,14 @@
                                 <td>UP</td>
                             </tr>
                             <tr>
-                                <th>Otherwise, if the module's name currently displayed has an even number of vowels (excluding Y) move the switch...</th>
+                                <th>Otherwise, if the displayed module has an even number of vowels (excluding Y) move the switch...</th>
                                 <td>DOWN</td>
 							</tr>
-                                <th>Otherwise, if a DetoNATO, The London Underground, or Unfair Cipher was just solved move the switch...</th>
+                                <th>Otherwise, if a The Digit, Mega Man 2, or Unfair Cipher was just solved move the switch...</th>
                                 <td>UP</td>
                             </tr>
 							<tr>
-                                <th>Otherwise, if 2 solves ago the displayed module started with an 'S' move the switch...</th>
+                                <th>Otherwise, if the displayed module starts with an 'S' move the switch...</th>
                                 <td>DOWN</td>
                             </tr>
                             <tr>
@@ -123,6 +121,9 @@
 							<li>Black Hole</li>
 							<li>Blind Maze</li>
 							<li>A Mistake</li>
+							<li>Morse-A-Maze</li>
+							<li>Mystic Square</li>
+							<li>Yahtzee</li>
 						</ul>
                     </div>
                    <div class="page-footer relative-footer">Page 2 of 3</div>
@@ -140,9 +141,15 @@
 							<li>Lightspeed</li>
 							<li>Number Nimbleness</li>
 							<li>3D Maze</li>
+							<li>3D Tunnels</li>
 							<li>Bomb Diffusal</li>
+							<li>Kudosudoku</li>
 							<li>Old Fogey</li>
 							<li>Button Grid</li>
+							<li>Reordered Keys</li>
+							<li>Misordered Keys</li>
+							<li>Recorded Keys</li>
+							<li>Disordered Keys</li>
 							<li>Simon Sings</li>
 							<li>Vectors</li>
 							<li>Game of Life Cruel</li>
@@ -155,8 +162,10 @@
 							<li>Simon Stores</li>
 							<li>The Cube</li>
 							<li>The Sphere</li>
+							<li>Ten-Button Color Code</li>
 							<li>LEGOs</li>
 							<li>Unfair Cipher</li>
+							<li>Ultimate Cycle</li>
 							<li>Ultimate Cipher</li>
 							<li>Bamboozled Again</li>
 						</ul>
