@@ -769,6 +769,23 @@ public class OrganizationScript : MonoBehaviour
         {
             order.Add("Mastermind Cruel");
         }
+        //Moves Factory Maze to end of order list
+        int fmazecount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Factory Maze"))
+            {
+                fmazecount++;
+            }
+        }
+        for (int i = 0; i < fmazecount; i++)
+        {
+            order.Remove("Factory Maze");
+        }
+        for (int i = 0; i < fmazecount; i++)
+        {
+            order.Add("Factory Maze");
+        }
         //Moves Simon Sends to end of order list
         int sendscount = 0;
         for (int i = 0; i < order.Count; i++)
@@ -785,6 +802,23 @@ public class OrganizationScript : MonoBehaviour
         for (int i = 0; i < sendscount; i++)
         {
             order.Add("Simon Sends");
+        }
+        //Moves Quintuples to end of order list
+        int quincount = 0;
+        for (int i = 0; i < order.Count; i++)
+        {
+            if (order.ElementAt(i).Equals("Quintuples"))
+            {
+                quincount++;
+            }
+        }
+        for (int i = 0; i < quincount; i++)
+        {
+            order.Remove("Quintuples");
+        }
+        for (int i = 0; i < quincount; i++)
+        {
+            order.Add("Quintuples");
         }
         //Moves The Hypercube to end of order list
         int hypercount = 0;
