@@ -15,7 +15,11 @@ public class OrganizationScript : MonoBehaviour
 
     public KMSelectable[] buttons;
 
-    public static string[] ignoredModules = null;
+    public static string[] fullModuleList = null;
+    private string[] ignoredModules;
+    private string[] backModules = new[] { "The Jewel Vault", "Turtle Robot", "Lightspeed", "Number Nimbleness", "3D Maze", "3D Tunnels", "Bomb Diffusal", "Kudosudoku", "Old Fogey", "Button Grid",
+        "Reordered Keys", "Misordered Keys", "Recorded Keys", "Disordered Keys", "Simon Sings", "Vectors", "Game of Life Cruel", "Mastermind Cruel", "Factory Maze", "Simon Sends", "Quintuples",
+        "The Hypercube", "The Ultracube", "Lombax Cubes", "Bamboozling Button", "Simon Stores", "The Cube", "The Sphere", "Ten-Button Color Code", "LEGOs", "Unfair Cipher", "Ultimate Cycle", "Ultimate Cipher", "Bamboozled Again" };
 
     private string[] ttksBefore = { "Morse Code","Wires","Two Bits","The Button","Colour Flash","Round Keypad","Password","Who's On First","Crazy Talk","Keypad","Listening","Orientation Cube" };
     private string[] ttksAfter = { "Semaphore", "Combination Lock", "Simon Says", "Astrology", "Switches", "Plumbing", "Maze", "Memory", "Complicated Wires", "Wire Sequence", "Cryptography" };
@@ -48,8 +52,15 @@ public class OrganizationScript : MonoBehaviour
     private bool otherOrgs = false;
     private int orgCount = 0;
 
+    private OrganizationSettings Settings = new OrganizationSettings();
+
     void Awake()
     {
+        ModConfig<OrganizationSettings> modConfig = new ModConfig<OrganizationSettings>("OrganizationSettings");
+        //Read from the settings file, or create one if one doesn't exist
+        Settings = modConfig.Settings;
+        //Update the settings file incase there was an error during read
+        modConfig.Settings = Settings;
         nextSwitch = "";
         currentSwitch = "Up";
         moduleId = moduleIdCounter++;
@@ -59,8 +70,9 @@ public class OrganizationScript : MonoBehaviour
             KMSelectable pressed = obj;
             pressed.OnInteract += delegate () { PressButton(pressed); return false; };
         }
-        if (ignoredModules == null)
-            ignoredModules = GetComponent<KMBossModule>().GetIgnoredModules("Organization", new string[]{
+        if (fullModuleList == null)
+        {
+            fullModuleList = GetComponent<KMBossModule>().GetIgnoredModules("Organization", new string[]{
                 "Forget Me Not",     //Mandatory to prevent unsolvable bombs.
 				"Forget Everything", //Cruel FMN.
 				"Turn The Key",      //TTK is timer based, and stalls the bomb if only it and FI are left.
@@ -80,7 +92,25 @@ public class OrganizationScript : MonoBehaviour
                 "Purgatory",
                 "Forget Us Not",
                 "Forget Perspective"
-        });
+            });
+        }
+        List<IEnumerable<string>> ignoreLists = new List<IEnumerable<string>>();
+        ignoredModules = fullModuleList.ToArray();
+        //Split the lists at empty values
+        while (ignoredModules.Count() > 0)
+        {
+            ignoreLists.Add(ignoredModules.TakeWhile(x => x != ""));
+            ignoredModules = ignoredModules.SkipWhile(x => x != "").Skip(1).ToArray();
+        }
+        //If we're ignoring solved based modules and the ignored module list is compatble, combine two of the lists
+        if (Settings.ignoreSolveBased && ignoreLists.Count > 1)
+            ignoredModules = ignoreLists[0].Concat(ignoreLists[1]).ToArray();
+        //If the ignore module list is incompatible or solved based modules will not be ignored, either use the whole list or the first split
+        else
+            ignoredModules = ignoreLists.FirstOrDefault().ToArray();
+        //If the JSON is compatible with move to back modules, add them here
+        if (ignoreLists.Count > 2)
+            backModules = ignoreLists.Last().ToArray();
     }
 
     void Start()
@@ -463,584 +493,21 @@ public class OrganizationScript : MonoBehaviour
                 }
             }
         }
-        //Moves The Jewel Vault to end of order list
-        int jewelcount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("The Jewel Vault"))
+
+        //Moves backModules to the end of order list
+        if (Settings.enableMoveToBack)
+            for (int i = 0; i < backModules.Count(); i++)
             {
-                jewelcount++;
+                int backCount = 0;
+                for (int j = 0; j < order.Count; j++)
+                    if (order.ElementAt(j).Equals(backModules[i]))
+                        backCount++;
+                for (int j = 0; j < backCount; j++)
+                    order.Remove(backModules[i]);
+                for (int j = 0; j < backCount; j++)
+                    order.Add(backModules[i]);
             }
-        }
-        for (int i = 0; i < jewelcount; i++)
-        {
-            order.Remove("The Jewel Vault");
-        }
-        for (int i = 0; i < jewelcount; i++)
-        {
-            order.Add("The Jewel Vault");
-        }
-        //Moves Turtle Robot to end of order list
-        int robotcount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Turtle Robot"))
-            {
-                robotcount++;
-            }
-        }
-        for (int i = 0; i < robotcount; i++)
-        {
-            order.Remove("Turtle Robot");
-        }
-        for (int i = 0; i < robotcount; i++)
-        {
-            order.Add("Turtle Robot");
-        }
-        //Moves Lightspeed to end of order list
-        int lightcount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Lightspeed"))
-            {
-                lightcount++;
-            }
-        }
-        for (int i = 0; i < lightcount; i++)
-        {
-            order.Remove("Lightspeed");
-        }
-        for (int i = 0; i < lightcount; i++)
-        {
-            order.Add("Lightspeed");
-        }
-        //Moves Number Nimbleness to end of order list
-        int numbercount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Number Nimbleness"))
-            {
-                numbercount++;
-            }
-        }
-        for (int i = 0; i < numbercount; i++)
-        {
-            order.Remove("Number Nimbleness");
-        }
-        for (int i = 0; i < numbercount; i++)
-        {
-            order.Add("Number Nimbleness");
-        }
-        //Moves 3D Maze to end of order list
-        int tdcount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("3D Maze"))
-            {
-                tdcount++;
-            }
-        }
-        for (int i = 0; i < tdcount; i++)
-        {
-            order.Remove("3D Maze");
-        }
-        for (int i = 0; i < tdcount; i++)
-        {
-            order.Add("3D Maze");
-        }
-        //Moves 3D Tunnels to end of order list
-        int tuncount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("3D Tunnels"))
-            {
-                tuncount++;
-            }
-        }
-        for (int i = 0; i < tuncount; i++)
-        {
-            order.Remove("3D Tunnels");
-        }
-        for (int i = 0; i < tuncount; i++)
-        {
-            order.Add("3D Tunnels");
-        }
-        //Moves Bomb Diffusal to end of order list
-        int diffusalcount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Bomb Diffusal"))
-            {
-                diffusalcount++;
-            }
-        }
-        for (int i = 0; i < diffusalcount; i++)
-        {
-            order.Remove("Bomb Diffusal");
-        }
-        for (int i = 0; i < diffusalcount; i++)
-        {
-            order.Add("Bomb Diffusal");
-        }
-        //Moves Kudosudoku to end of order list
-        int kudocount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Kudosudoku"))
-            {
-                kudocount++;
-            }
-        }
-        for (int i = 0; i < kudocount; i++)
-        {
-            order.Remove("Kudosudoku");
-        }
-        for (int i = 0; i < kudocount; i++)
-        {
-            order.Add("Kudosudoku");
-        }
-        //Moves Old Fogey to end of order list
-        int fogeycount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Old Fogey"))
-            {
-                fogeycount++;
-            }
-        }
-        for (int i = 0; i < fogeycount; i++)
-        {
-            order.Remove("Old Fogey");
-        }
-        for (int i = 0; i < fogeycount; i++)
-        {
-            order.Add("Old Fogey");
-        }
-        //Moves Button Grid to end of order list
-        int gridcount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Button Grid"))
-            {
-                gridcount++;
-            }
-        }
-        for (int i = 0; i < gridcount; i++)
-        {
-            order.Remove("Button Grid");
-        }
-        for (int i = 0; i < gridcount; i++)
-        {
-            order.Add("Button Grid");
-        }
-        //Moves Reordered Keys to end of order list
-        int reordcount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Reordered Keys"))
-            {
-                reordcount++;
-            }
-        }
-        for (int i = 0; i < reordcount; i++)
-        {
-            order.Remove("Reordered Keys");
-        }
-        for (int i = 0; i < reordcount; i++)
-        {
-            order.Add("Reordered Keys");
-        }
-        //Moves Misordered Keys to end of order list
-        int misordcount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Misordered Keys"))
-            {
-                misordcount++;
-            }
-        }
-        for (int i = 0; i < misordcount; i++)
-        {
-            order.Remove("Misordered Keys");
-        }
-        for (int i = 0; i < misordcount; i++)
-        {
-            order.Add("Misordered Keys");
-        }
-        //Moves Recorded Keys to end of order list
-        int recordcount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Recorded Keys"))
-            {
-                recordcount++;
-            }
-        }
-        for (int i = 0; i < recordcount; i++)
-        {
-            order.Remove("Recorded Keys");
-        }
-        for (int i = 0; i < recordcount; i++)
-        {
-            order.Add("Recorded Keys");
-        }
-        //Moves Disordered Keys to end of order list
-        int disordcount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Disordered Keys"))
-            {
-                disordcount++;
-            }
-        }
-        for (int i = 0; i < disordcount; i++)
-        {
-            order.Remove("Disordered Keys");
-        }
-        for (int i = 0; i < disordcount; i++)
-        {
-            order.Add("Disordered Keys");
-        }
-        //Moves Simon Sings to end of order list
-        int singscount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Simon Sings"))
-            {
-                singscount++;
-            }
-        }
-        for (int i = 0; i < singscount; i++)
-        {
-            order.Remove("Simon Sings");
-        }
-        for (int i = 0; i < singscount; i++)
-        {
-            order.Add("Simon Sings");
-        }
-        //Moves Vectors to end of order list
-        int vectorcount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Vectors"))
-            {
-                vectorcount++;
-            }
-        }
-        for (int i = 0; i < vectorcount; i++)
-        {
-            order.Remove("Vectors");
-        }
-        for (int i = 0; i < vectorcount; i++)
-        {
-            order.Add("Vectors");
-        }
-        //Moves Game of Life Cruel to end of order list
-        int gofcount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Game of Life Cruel"))
-            {
-                gofcount++;
-            }
-        }
-        for (int i = 0; i < gofcount; i++)
-        {
-            order.Remove("Game of Life Cruel");
-        }
-        for (int i = 0; i < gofcount; i++)
-        {
-            order.Add("Game of Life Cruel");
-        }
-        //Moves Mastermind Cruel to end of order list
-        int mccount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Mastermind Cruel"))
-            {
-                mccount++;
-            }
-        }
-        for (int i = 0; i < mccount; i++)
-        {
-            order.Remove("Mastermind Cruel");
-        }
-        for (int i = 0; i < mccount; i++)
-        {
-            order.Add("Mastermind Cruel");
-        }
-        //Moves Factory Maze to end of order list
-        int fmazecount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Factory Maze"))
-            {
-                fmazecount++;
-            }
-        }
-        for (int i = 0; i < fmazecount; i++)
-        {
-            order.Remove("Factory Maze");
-        }
-        for (int i = 0; i < fmazecount; i++)
-        {
-            order.Add("Factory Maze");
-        }
-        //Moves Simon Sends to end of order list
-        int sendscount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Simon Sends"))
-            {
-                sendscount++;
-            }
-        }
-        for (int i = 0; i < sendscount; i++)
-        {
-            order.Remove("Simon Sends");
-        }
-        for (int i = 0; i < sendscount; i++)
-        {
-            order.Add("Simon Sends");
-        }
-        //Moves Quintuples to end of order list
-        int quincount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Quintuples"))
-            {
-                quincount++;
-            }
-        }
-        for (int i = 0; i < quincount; i++)
-        {
-            order.Remove("Quintuples");
-        }
-        for (int i = 0; i < quincount; i++)
-        {
-            order.Add("Quintuples");
-        }
-        //Moves The Hypercube to end of order list
-        int hypercount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("The Hypercube"))
-            {
-                hypercount++;
-            }
-        }
-        for (int i = 0; i < hypercount; i++)
-        {
-            order.Remove("The Hypercube");
-        }
-        for (int i = 0; i < hypercount; i++)
-        {
-            order.Add("The Hypercube");
-        }
-        //Moves The Ultracube to end of order list
-        int ultracount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("The Ultracube"))
-            {
-                ultracount++;
-            }
-        }
-        for (int i = 0; i < ultracount; i++)
-        {
-            order.Remove("The Ultracube");
-        }
-        for (int i = 0; i < ultracount; i++)
-        {
-            order.Add("The Ultracube");
-        }
-        //Moves Lombax Cubes to end of order list
-        int lombcount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Lombax Cubes"))
-            {
-                lombcount++;
-            }
-        }
-        for (int i = 0; i < lombcount; i++)
-        {
-            order.Remove("Lombax Cubes");
-        }
-        for (int i = 0; i < lombcount; i++)
-        {
-            order.Add("Lombax Cubes");
-        }
-        //Moves Bamboozling Button to end of order list
-        int bamBcount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Bamboozling Button"))
-            {
-                bamBcount++;
-            }
-        }
-        for (int i = 0; i < bamBcount; i++)
-        {
-            order.Remove("Bamboozling Button");
-        }
-        for (int i = 0; i < bamBcount; i++)
-        {
-            order.Add("Bamboozling Button");
-        }
-        //Moves Simon Stores to end of order list
-        int storescount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Simon Stores"))
-            {
-                storescount++;
-            }
-        }
-        for (int i = 0; i < storescount; i++)
-        {
-            order.Remove("Simon Stores");
-        }
-        for (int i = 0; i < storescount; i++)
-        {
-            order.Add("Simon Stores");
-        }
-        //Moves The Cube to end of order list
-        int cubecount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("The Cube"))
-            {
-                cubecount++;
-            }
-        }
-        for (int i = 0; i < cubecount; i++)
-        {
-            order.Remove("The Cube");
-        }
-        for (int i = 0; i < cubecount; i++)
-        {
-            order.Add("The Cube");
-        }
-        //Moves The Sphere to end of order list
-        int spherecount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("The Sphere"))
-            {
-                spherecount++;
-            }
-        }
-        for (int i = 0; i < spherecount; i++)
-        {
-            order.Remove("The Sphere");
-        }
-        for (int i = 0; i < spherecount; i++)
-        {
-            order.Add("The Sphere");
-        }
-        //Moves Ten-Button Color Code to end of order list
-        int tenbutcount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Ten-Button Color Code"))
-            {
-                tenbutcount++;
-            }
-        }
-        for (int i = 0; i < tenbutcount; i++)
-        {
-            order.Remove("Ten-Button Color Code");
-        }
-        for (int i = 0; i < tenbutcount; i++)
-        {
-            order.Add("Ten-Button Color Code");
-        }
-        //Moves LEGOs to end of order list
-        int legocount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("LEGOs"))
-            {
-                legocount++;
-            }
-        }
-        for (int i = 0; i < legocount; i++)
-        {
-            order.Remove("LEGOs");
-        }
-        for (int i = 0; i < legocount; i++)
-        {
-            order.Add("LEGOs");
-        }
-        //Moves Unfair Cipher to end of order list
-        int unfaircount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Unfair Cipher"))
-            {
-                unfaircount++;
-            }
-        }
-        for (int i = 0; i < unfaircount; i++)
-        {
-            order.Remove("Unfair Cipher");
-        }
-        for (int i = 0; i < unfaircount; i++)
-        {
-            order.Add("Unfair Cipher");
-        }
-        //Moves Ultimate Cycle to end of order list
-        int cyclecount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Ultimate Cycle"))
-            {
-                cyclecount++;
-            }
-        }
-        for (int i = 0; i < cyclecount; i++)
-        {
-            order.Remove("Ultimate Cycle");
-        }
-        for (int i = 0; i < cyclecount; i++)
-        {
-            order.Add("Ultimate Cycle");
-        }
-        //Moves Ultimate Cipher to end of order list
-        int ciphercount = 0;
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (order.ElementAt(i).Equals("Ultimate Cipher"))
-            {
-                ciphercount++;
-            }
-        }
-        for (int i = 0; i < ciphercount; i++)
-        {
-            order.Remove("Ultimate Cipher");
-        }
-        for (int i = 0; i < ciphercount; i++)
-        {
-            order.Add("Ultimate Cipher");
-        }
-        //Moves Bamboozled Again to end of order list
-        int bamcount = 0;
-        for(int i = 0; i < order.Count; i++)
-        {
-            if(order.ElementAt(i).Equals("Bamboozled Again"))
-            {
-                bamcount++;
-            }
-        }
-        for (int i = 0; i < bamcount; i++)
-        {
-            order.Remove("Bamboozled Again");
-        }
-        for (int i = 0; i < bamcount; i++)
-        {
-            order.Add("Bamboozled Again");
-        }
+        
         string build;
         if(order.Count != 0)
         {
@@ -1320,4 +787,31 @@ public class OrganizationScript : MonoBehaviour
         module.GetComponent<Text>().text = "That's Unfortunate :(";
         moduleSolved = true;
     }
+
+    class OrganizationSettings
+    {
+        public bool ignoreSolveBased = true;
+        public bool enableMoveToBack = true;
+    }
+
+    static Dictionary<string, object>[] TweaksEditorSettings = new Dictionary<string, object>[]
+    {
+        new Dictionary<string, object>
+        {
+            { "Filename", "OrganizationSettings.json" },
+            { "Name", "Organization Ignore Settings" },
+            { "Listing", new List<Dictionary<string, object>>{
+                new Dictionary<string, object>
+                {
+                    { "Key", "ignoreSolveBased" },
+                    { "Text", "Have Organization ignore modules that can change answers on solve" }
+                },
+                new Dictionary<string, object>
+                {
+                    { "Key", "enableMoveToBack" },
+                    { "Text", "Force modules that may take a long time to solve to appear later in Organization" }
+                }
+            } }
+        }
+    };
 }
