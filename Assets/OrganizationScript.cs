@@ -132,7 +132,6 @@ public class OrganizationScript : MonoBehaviour
     {
         if (order.Count == 0 && detectionDone == false)
         {
-            module.GetComponent<Text>().text = "No Modules :)";
             detectionDone = true;
             readyForInput = true;
         }
@@ -375,6 +374,7 @@ public class OrganizationScript : MonoBehaviour
                         }
                         if (order.Count == 0)
                         {
+                            module.GetComponent<Text>().text = "No Modules :)";
                             Debug.LogFormat("[Organization #{0}] All non-ignored modules solved! GG!", moduleId);
                             moduleSolved = true;
                             bomb.GetComponent<KMBombModule>().HandlePass();
@@ -517,6 +517,7 @@ public class OrganizationScript : MonoBehaviour
         else
         {
             build = "[Organization #{0}] The order of the non-ignored modules has been determined as: none";
+            module.GetComponent<Text>().text = "No Modules :)";
         }
         for (int i = 0; i < order.Count; i++)
         {
