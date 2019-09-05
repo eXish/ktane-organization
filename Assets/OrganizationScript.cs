@@ -29,6 +29,8 @@ public class OrganizationScript : MonoBehaviour
     private string nextSwitch;
     private string currentSwitch;
 
+    private bool cooldown = false;
+
     sealed class OrgBombInfo
     {
         public List<OrganizationScript> Modules = new List<OrganizationScript>();
@@ -121,6 +123,11 @@ public class OrganizationScript : MonoBehaviour
             _infos[serialNumber] = new OrgBombInfo();
         info = _infos[serialNumber];
         info.Modules.Add(this);
+        if(Settings.disableTimeModeCooldown == true)
+        {
+            TimeModeActive = false;
+        }
+        Debug.LogFormat("[Organization #{0}] TimeMode Cooldown Active: '{1}'", moduleId, TimeModeActive);
         generateOrder();
         if(bomb.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count() == 0)
         {
@@ -152,7 +159,37 @@ public class OrganizationScript : MonoBehaviour
                     string name = getLatestSolve(bomb.GetSolvedModuleNames(), solved);
                     if (ignoredModules.Contains(name))
                     {
+                        Debug.LogFormat("[Organization #{0}] Ignored module : '{1}' has been solved", moduleId, name);
                         solved.Add(name);
+                        //Switch check for ignored module solve
+                        getNewSwitchPos();
+                    }
+                    else if (cooldown == true)
+                    {
+                        Debug.LogFormat("[Organization #{0}] '{1}' has been solved, but due to timemode's cooldown the strike will be ignored! Removing from future possibilities...", moduleId, name);
+                        solved.Add(name);
+                        order.Remove(name);
+                        string build;
+                        if (order.Count != 0)
+                        {
+                            build = "[Organization #{0}] The new order of the non-ignored modules has now been determined as: ";
+                        }
+                        else
+                        {
+                            build = "[Organization #{0}] The new order of the non-ignored modules has now been determined as: none";
+                        }
+                        for (int i = 0; i < order.Count; i++)
+                        {
+                            if (i == (order.Count - 1))
+                            {
+                                build += order.ElementAt(i);
+                            }
+                            else
+                            {
+                                build += (order.ElementAt(i) + ", ");
+                            }
+                        }
+                        Debug.LogFormat(build, moduleId);
                     }
                     else
                     {
@@ -357,7 +394,7 @@ public class OrganizationScript : MonoBehaviour
 
     void PressButton(KMSelectable pressed)
     {
-        if(moduleSolved != true)
+        if (moduleSolved != true && cooldown != true)
         {
             audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
             pressed.AddInteractionPunch(0.25f);
@@ -381,9 +418,25 @@ public class OrganizationScript : MonoBehaviour
                         }
                         else
                         {
-                            audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, transform);
-                            Debug.LogFormat("[Organization #{0}] The next module is now shown! '{1}'!", moduleId, order.ElementAt(0));
-                            module.GetComponent<Text>().text = "" + order.ElementAt(0);
+                            if(TimeModeActive == true)
+                            {
+                                audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, transform);
+                                if (otherOrgs == true)
+                                {
+                                    module.GetComponent<Text>().text = "In Cooldown... (Beware of other Organizations!)";
+                                }
+                                else
+                                {
+                                    module.GetComponent<Text>().text = "In Cooldown... (You may free solve now!)";
+                                }
+                                StartCoroutine(timer());
+                            }
+                            else
+                            {
+                                audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, transform);
+                                Debug.LogFormat("[Organization #{0}] The next module is now shown! '{1}'!", moduleId, order.ElementAt(0));
+                                module.GetComponent<Text>().text = "" + order.ElementAt(0);
+                            }
                         }
                     }
                     else
@@ -762,6 +815,34 @@ public class OrganizationScript : MonoBehaviour
         StopCoroutine("upSwitch");
     }
 
+    private IEnumerator timer()
+    {
+        cooldown = true;
+        double counter = UnityEngine.Random.Range(30, 46);
+        if(otherOrgs == true)
+        {
+            Debug.LogFormat("[Organization #{0}] Cooldown activated! There is {1} seconds of free solving until the next module is shown!", moduleId, (int)counter);
+        }
+        else
+        {
+            Debug.LogFormat("[Organization #{0}] Cooldown activated! There is {1} seconds until the next module is shown! (No guaranteed free solves due to other orgs)", moduleId, (int)counter);
+        }
+        while(counter > 0)
+        {
+            yield return new WaitForSeconds(0.1f);
+            if(counter < 11)
+            {
+                module.GetComponent<Text>().text = ""+(int)counter;
+            }
+            counter -= 0.1;
+        }
+        cooldown = false;
+        audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.NeedyActivated, transform);
+        Debug.LogFormat("[Organization #{0}] Cooldown over! The next module is now shown! '{1}'!", moduleId, order.ElementAt(0));
+        module.GetComponent<Text>().text = "" + order.ElementAt(0);
+        StopCoroutine("timer");
+    }
+
     //twitch plays
     #pragma warning disable 414
     private readonly string TwitchHelpMessage = @"!{0} continue/cont [Presses the continue button] | !{0} toggle/switch [Toggles the switch to move to the other positon (positions are either up or down)]";
@@ -782,6 +863,8 @@ public class OrganizationScript : MonoBehaviour
         }
     }
 
+    bool TimeModeActive;
+
     IEnumerator TwitchHandleForcedSolve()
     {
         yield return null;
@@ -793,6 +876,7 @@ public class OrganizationScript : MonoBehaviour
     {
         public bool ignoreSolveBased = true;
         public bool enableMoveToBack = true;
+        public bool disableTimeModeCooldown = false;
     }
 
     static Dictionary<string, object>[] TweaksEditorSettings = new Dictionary<string, object>[]
@@ -811,7 +895,12 @@ public class OrganizationScript : MonoBehaviour
                 {
                     { "Key", "enableMoveToBack" },
                     { "Text", "Force modules that may take a long time to solve to appear later in Organization" }
-                }
+                },
+                new Dictionary<string, object>
+                {
+                    { "Key", "disableTimeModeCooldown" },
+                    { "Text", "Disables the feature of Organization performing a cooldown before its next module (any module may be solved during this time)" }
+                },
             } }
         }
     };
