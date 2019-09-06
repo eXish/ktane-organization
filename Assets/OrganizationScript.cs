@@ -423,11 +423,11 @@ public class OrganizationScript : MonoBehaviour
                                 audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, transform);
                                 if (otherOrgs == true)
                                 {
-                                    module.GetComponent<Text>().text = "In Cooldown... (Beware of other Organizations!)";
+                                    module.GetComponent<Text>().text = "In Cooldown...";
                                 }
                                 else
                                 {
-                                    module.GetComponent<Text>().text = "In Cooldown... (You may free solve now!)";
+                                    module.GetComponent<Text>().text = "In Cooldown...";
                                 }
                                 StartCoroutine(timer());
                             }
