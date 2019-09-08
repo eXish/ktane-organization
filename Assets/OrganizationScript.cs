@@ -852,6 +852,10 @@ public class OrganizationScript : MonoBehaviour
         if (Regex.IsMatch(command, @"^\s*continue\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) || Regex.IsMatch(command, @"^\s*cont\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
             yield return null;
+            if (TimeModeActive == true)
+            {
+                yield return "sendtochat Organization is now in Cooldown!";
+            }
             buttons[0].OnInteract();
             yield break;
         }
