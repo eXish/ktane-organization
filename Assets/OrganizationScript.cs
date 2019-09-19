@@ -435,6 +435,18 @@ public class OrganizationScript : MonoBehaviour
                             {
                                 audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, transform);
                                 Debug.LogFormat("[Organization #{0}] The next module is now shown! '{1}'!", moduleId, order.ElementAt(0));
+                                if (order.ElementAt(0).Contains('’'))
+                                {
+                                    order.ElementAt(0).Replace('’', '\'');
+                                }
+                                else if (order.ElementAt(0).Contains('³'))
+                                {
+                                    order.ElementAt(0).Replace('³', '3');
+                                }
+                                else if (order.ElementAt(0).Contains('è'))
+                                {
+                                    order.ElementAt(0).Replace('è', 'e');
+                                }
                                 module.GetComponent<Text>().text = "" + order.ElementAt(0);
                             }
                         }
@@ -564,6 +576,18 @@ public class OrganizationScript : MonoBehaviour
         string build;
         if(order.Count != 0)
         {
+            if (order.ElementAt(0).Contains('’'))
+            {
+                order.ElementAt(0).Replace('’', '\'');
+            }
+            else if (order.ElementAt(0).Contains('³'))
+            {
+                order.ElementAt(0).Replace('³', '3');
+            }
+            else if (order.ElementAt(0).Contains('è'))
+            {
+                order.ElementAt(0).Replace('è', 'e');
+            }
             module.GetComponent<Text>().text = "" + order.ElementAt(0);
             build = "[Organization #{0}] The order of the non-ignored modules has been determined as: ";
         }
@@ -839,6 +863,18 @@ public class OrganizationScript : MonoBehaviour
         cooldown = false;
         audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.NeedyActivated, transform);
         Debug.LogFormat("[Organization #{0}] Cooldown over! The next module is now shown! '{1}'!", moduleId, order.ElementAt(0));
+        if (order.ElementAt(0).Contains('’'))
+        {
+            order.ElementAt(0).Replace('’', '\'');
+        }
+        else if (order.ElementAt(0).Contains('³'))
+        {
+            order.ElementAt(0).Replace('³', '3');
+        }
+        else if (order.ElementAt(0).Contains('è'))
+        {
+            order.ElementAt(0).Replace('è', 'e');
+        }
         module.GetComponent<Text>().text = "" + order.ElementAt(0);
         StopCoroutine("timer");
     }
