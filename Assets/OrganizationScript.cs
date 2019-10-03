@@ -117,22 +117,7 @@ public class OrganizationScript : MonoBehaviour
 
     void Start()
     {
-        arrow.GetComponent<Renderer>().enabled = false;
-        var serialNumber = bomb.GetSerialNumber();
-        if (!_infos.ContainsKey(serialNumber))
-            _infos[serialNumber] = new OrgBombInfo();
-        info = _infos[serialNumber];
-        info.Modules.Add(this);
-        if(Settings.disableTimeModeCooldown == true)
-        {
-            TimeModeActive = false;
-        }
-        Debug.LogFormat("[Organization #{0}] TimeMode Cooldown Active: '{1}'", moduleId, TimeModeActive);
-        generateOrder();
-        if(bomb.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count() == 0)
-        {
-            getNewSwitchPos();
-        }
+        StartCoroutine(delayModStart());
     }
 
     void Update()
@@ -839,6 +824,27 @@ public class OrganizationScript : MonoBehaviour
         StopCoroutine("upSwitch");
     }
 
+    private IEnumerator delayModStart()
+    {
+        yield return new WaitForSeconds(1f);
+        arrow.GetComponent<Renderer>().enabled = false;
+        var serialNumber = bomb.GetSerialNumber();
+        if (!_infos.ContainsKey(serialNumber))
+            _infos[serialNumber] = new OrgBombInfo();
+        info = _infos[serialNumber];
+        info.Modules.Add(this);
+        if (Settings.disableTimeModeCooldown == true)
+        {
+            TimeModeActive = false;
+        }
+        Debug.LogFormat("[Organization #{0}] TimeMode Cooldown Active: '{1}'", moduleId, TimeModeActive);
+        generateOrder();
+        if (bomb.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count() == 0)
+        {
+            getNewSwitchPos();
+        }
+    }
+
     private IEnumerator timer()
     {
         cooldown = true;
@@ -888,11 +894,12 @@ public class OrganizationScript : MonoBehaviour
         if (Regex.IsMatch(command, @"^\s*continue\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) || Regex.IsMatch(command, @"^\s*cont\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
             yield return null;
-            if (TimeModeActive == true)
+            buttons[0].OnInteract();
+            yield return new WaitForSeconds(0.2f);
+            if (TimeModeActive == true && cooldown == true)
             {
                 yield return "sendtochat Organization is now in Cooldown!";
             }
-            buttons[0].OnInteract();
             yield break;
         }
         if (Regex.IsMatch(command, @"^\s*toggle\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) || Regex.IsMatch(command, @"^\s*switch\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
