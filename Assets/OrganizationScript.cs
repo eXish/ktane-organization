@@ -52,6 +52,7 @@ public class OrganizationScript : MonoBehaviour
     private bool announceMade = false;
     private bool announceMade2 = false;
     private bool otherOrgs = false;
+    private bool started = false;
     private int orgCount = 0;
 
     private OrganizationSettings Settings = new OrganizationSettings();
@@ -122,7 +123,7 @@ public class OrganizationScript : MonoBehaviour
 
     void Update()
     {
-        if (order.Count == 0 && detectionDone == false)
+        if (order.Count == 0 && detectionDone == false && started == true)
         {
             detectionDone = true;
             readyForInput = true;
@@ -843,6 +844,7 @@ public class OrganizationScript : MonoBehaviour
         {
             getNewSwitchPos();
         }
+        started = true;
     }
 
     private IEnumerator timer()
