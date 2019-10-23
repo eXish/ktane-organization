@@ -53,6 +53,7 @@ public class OrganizationScript : MonoBehaviour
     private bool announceMade2 = false;
     private bool otherOrgs = false;
     private bool started = false;
+    private bool delayed = false;
     private int orgCount = 0;
 
     private OrganizationSettings Settings = new OrganizationSettings();
@@ -145,7 +146,7 @@ public class OrganizationScript : MonoBehaviour
                     string name = getLatestSolve(bomb.GetSolvedModuleNames(), solved);
                     if (ignoredModules.Contains(name))
                     {
-                        Debug.LogFormat("[Organization #{0}] Ignored module : '{1}' has been solved", moduleId, name);
+                        Debug.LogFormat("[Organization #{0}] Ignored module: '{1}' has been solved", moduleId, name);
                         solved.Add(name);
                         //Switch check for ignored module solve
                         getNewSwitchPos();
@@ -236,7 +237,6 @@ public class OrganizationScript : MonoBehaviour
                                         solved.Add(order.ElementAt(0));
                                         order.RemoveAt(0);
                                         StartCoroutine(readyUpDelayed());
-                                        arrow.GetComponent<Renderer>().enabled = true;
                                         Debug.LogFormat("[Organization #{0}] '{1}' has been solved for this Organization! Ready for next module...", moduleId, name);
                                         getNewSwitchPos();
                                     }
@@ -380,7 +380,7 @@ public class OrganizationScript : MonoBehaviour
 
     void PressButton(KMSelectable pressed)
     {
-        if (moduleSolved != true && cooldown != true)
+        if (moduleSolved != true && cooldown != true && delayed != true)
         {
             audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
             pressed.AddInteractionPunch(0.25f);
@@ -439,7 +439,7 @@ public class OrganizationScript : MonoBehaviour
                     }
                     else
                     {
-                        Debug.LogFormat("[Organization #{0}] The switch is not in the correct position! Strike!", moduleId);
+                        Debug.LogFormat("[Organization #{0}] The switch is not in the correct position (currently '{1}')! Strike!", moduleId, currentSwitch);
                         bomb.GetComponent<KMBombModule>().HandleStrike();
                         int rand = UnityEngine.Random.Range(0, 3);
                         if (rand == 0)
@@ -598,8 +598,11 @@ public class OrganizationScript : MonoBehaviour
 
     private IEnumerator readyUpDelayed()
     {
+        delayed = true;
         yield return new WaitForSeconds(1.0f);
         readyForInput = true;
+        arrow.GetComponent<Renderer>().enabled = true;
+        delayed = false;
         StopCoroutine("readyUpDelayed");
     }
 
