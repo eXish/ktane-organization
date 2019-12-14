@@ -545,7 +545,8 @@ public class OrganizationScript : MonoBehaviour
             }
         }
 
-        //Moves backModules to the end of order list
+        //Moves backModules to the end of order list in random order
+        backModules = backModules.Shuffle();
         if (Settings.enableMoveToBack)
             for (int i = 0; i < backModules.Count(); i++)
             {
