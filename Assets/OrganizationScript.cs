@@ -151,9 +151,12 @@ public class OrganizationScript : MonoBehaviour
                         //Switch check for ignored module solve
                         getNewSwitchPos();
                     }
-                    else if (cooldown == true)
+                    else if (cooldown == true || TwitchAbandonModule.Any(module => module.ModuleDisplayName.Equals(name)))
                     {
-                        Debug.LogFormat("[Organization #{0}] '{1}' has been solved, but due to timemode's cooldown the strike will be ignored! Removing from future possibilities...", moduleId, name);
+                        if(cooldown)
+                            Debug.LogFormat("[Organization #{0}] '{1}' has been solved, but due to timemode's cooldown the strike will be ignored! Removing from future possibilities...", moduleId, name);
+                        else
+                            Debug.LogFormat("[Organization #{0}] '{1}' has been solved, but due to being force solved the strike will be ignored! Removing from future possibilities...", moduleId, name);
                         solved.Add(name);
                         order.Remove(name);
                         string build;
@@ -917,6 +920,7 @@ public class OrganizationScript : MonoBehaviour
     }
 
     bool TimeModeActive;
+    private List<KMBombModule> TwitchAbandonModule = new List<KMBombModule>();
 
     IEnumerator TwitchHandleForcedSolve()
     {
