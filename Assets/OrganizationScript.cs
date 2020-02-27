@@ -153,7 +153,7 @@ public class OrganizationScript : MonoBehaviour
                     }
                     else if (cooldown == true || TwitchAbandonModule.Any(module => module.ModuleDisplayName.Equals(name)))
                     {
-                        if(cooldown)
+                        if (cooldown)
                             Debug.LogFormat("[Organization #{0}] '{1}' has been solved, but due to timemode's cooldown the strike will be ignored! Removing from future possibilities...", moduleId, name);
                         else
                             Debug.LogFormat("[Organization #{0}] '{1}' has been solved, but due to being force solved the strike will be ignored! Removing from future possibilities...", moduleId, name);
@@ -180,6 +180,11 @@ public class OrganizationScript : MonoBehaviour
                             }
                         }
                         Debug.LogFormat(build, moduleId);
+                        if (!cooldown && module.GetComponent<Text>().text.Equals(name) && !readyForInput)
+                        {
+                            readyForInput = true;
+                            getNewSwitchPos();
+                        }
                     }
                     else
                     {
@@ -426,7 +431,7 @@ public class OrganizationScript : MonoBehaviour
                                 Debug.LogFormat("[Organization #{0}] The next module is now shown! '{1}'!", moduleId, order.ElementAt(0));
                                 if (order.ElementAt(0).Contains('’'))
                                 {
-                                    order.ElementAt(0).Replace('’', '\'');
+                                    order.ElementAt(0).Replace("’", "\'");
                                 }
                                 else if (order.ElementAt(0).Contains('³'))
                                 {
@@ -568,7 +573,7 @@ public class OrganizationScript : MonoBehaviour
         {
             if (order.ElementAt(0).Contains('’'))
             {
-                order.ElementAt(0).Replace('’', '\'');
+                order.ElementAt(0).Replace("’", "\'");
             }
             else if (order.ElementAt(0).Contains('³'))
             {
