@@ -198,6 +198,9 @@ public class OrganizationScript : MonoBehaviour
                             }
                         }
                         Debug.LogFormat(build, moduleId);
+                        name = name.Replace("’", "\'");
+                        name = name.Replace('³', '3');
+                        name = name.Replace('è', 'e');
                         if (!cooldown && module.GetComponent<Text>().text.Equals(name) && !readyForInput)
                         {
                             readyForInput = true;
@@ -672,7 +675,7 @@ public class OrganizationScript : MonoBehaviour
         }
         else if (solved.Count == 1)
         {
-            if (vowelCount(module.GetComponent<Text>().text) % 2 == 0)
+            if (vowelCount(module.GetComponent<Text>().text.Replace('è', 'e')) % 2 == 0)
             {
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 2 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
