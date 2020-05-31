@@ -38,27 +38,27 @@ public class ExampleModule2 : MonoBehaviour
 
     private void OnDeselect()
     {
-        Debug.Log("ExampleModule2 OnDeselect.");
+        //Debug.Log("ExampleModule2 OnDeselect.");
     }
 
     private void OnLeft()
     {
-        Debug.Log("ExampleModule2 OnLeft.");
+        //Debug.Log("ExampleModule2 OnLeft.");
     }
 
     private void OnRight()
     {
-        Debug.Log("ExampleModule2 OnRight.");
+        //Debug.Log("ExampleModule2 OnRight.");
     }
 
     private void OnSelect()
     {
-        Debug.Log("ExampleModule2 OnSelect.");
+        //Debug.Log("ExampleModule2 OnSelect.");
     }
 
     private void OnHighlight()
     {
-        Debug.Log("ExampleModule2 OnHighlight.");
+        //Debug.Log("ExampleModule2 OnHighlight.");
     }
 
     void OnActivate()
@@ -81,12 +81,12 @@ public class ExampleModule2 : MonoBehaviour
             batteryCount += responseDict["numbatteries"];
         }
 
-        Debug.Log("Battery count: " + batteryCount);
+        //Debug.Log("Battery count: " + batteryCount);
     }
 
     bool OnCancel()
     {
-        Debug.Log("ExampleModule2 cancel.");
+        //Debug.Log("ExampleModule2 cancel.");
 
         return true;
     }
@@ -94,7 +94,7 @@ public class ExampleModule2 : MonoBehaviour
     //On pressing button a looped sound will play
     void OnPress(bool correctButton)
     {
-        Debug.Log("Pressed " + correctButton + " button");
+        //Debug.Log("Pressed " + correctButton + " button");
 
         if (correctButton)
         {
@@ -110,7 +110,7 @@ public class ExampleModule2 : MonoBehaviour
     //On releasing a button a looped sound will stop
     void OnRelease()
     {
-        Debug.Log("OnInteractEnded Released");
+        //Debug.Log("OnInteractEnded Released");
         if(audioRef != null && audioRef.StopSound != null)
         {
             audioRef.StopSound();

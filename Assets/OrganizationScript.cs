@@ -115,11 +115,28 @@ public class OrganizationScript : MonoBehaviour
         //If the JSON is compatible with move to back modules, add them here
         if (ignoreLists.Count > 2)
             backModules = ignoreLists.Last().ToArray();
+        GetComponent<KMBombModule>().OnActivate += OnActivate;
     }
 
-    void Start()
+    void OnActivate()
     {
-        StartCoroutine(delayModStart());
+        arrow.GetComponent<Renderer>().enabled = false;
+        var serialNumber = bomb.GetSerialNumber();
+        if (!_infos.ContainsKey(serialNumber))
+            _infos[serialNumber] = new OrgBombInfo();
+        info = _infos[serialNumber];
+        info.Modules.Add(this);
+        if (Settings.disableTimeModeCooldown == true)
+        {
+            TimeModeActive = false;
+        }
+        Debug.LogFormat("[Organization #{0}] Time Mode Cooldown Active: '{1}'", moduleId, TimeModeActive);
+        generateOrder();
+        if (bomb.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count() == 0)
+        {
+            getNewSwitchPos();
+        }
+        started = true;
     }
 
     void Update()
@@ -143,6 +160,7 @@ public class OrganizationScript : MonoBehaviour
                 int progress = bomb.GetSolvedModuleNames().Count();
                 if (progress > solved.Count)
                 {
+                    Debug.LogFormat("[Organization #{0}] ---------------------------------------------------", moduleId);
                     string name = getLatestSolve(bomb.GetSolvedModuleNames(), solved);
                     if (ignoredModules.Contains(name))
                     {
@@ -188,7 +206,6 @@ public class OrganizationScript : MonoBehaviour
                     }
                     else
                     {
-                        Debug.LogFormat("[Organization #{0}] ---------------------------------------------------", moduleId);
                         if (otherOrgs == true)
                         {
                             if (readyForInput == true)
@@ -390,7 +407,7 @@ public class OrganizationScript : MonoBehaviour
     {
         if (moduleSolved != true && cooldown != true && delayed != true)
         {
-            audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
+            audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, pressed.transform);
             pressed.AddInteractionPunch(0.25f);
             if (buttons[0] == pressed)
             {
@@ -399,7 +416,7 @@ public class OrganizationScript : MonoBehaviour
                     if (currentSwitch.Equals(nextSwitch))
                     {
                         readyForInput = false;
-                        if(otherOrgs == true)
+                        if (otherOrgs == true)
                         {
                             arrow.GetComponent<Renderer>().enabled = false;
                         }
@@ -412,7 +429,7 @@ public class OrganizationScript : MonoBehaviour
                         }
                         else
                         {
-                            if(TimeModeActive == true)
+                            if (TimeModeActive == true)
                             {
                                 audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, transform);
                                 if (otherOrgs == true)
@@ -429,19 +446,20 @@ public class OrganizationScript : MonoBehaviour
                             {
                                 audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, transform);
                                 Debug.LogFormat("[Organization #{0}] The next module is now shown! '{1}'!", moduleId, order.ElementAt(0));
-                                if (order.ElementAt(0).Contains('’'))
+                                string temp = order[0];
+                                if (temp.Contains('’'))
                                 {
-                                    order.ElementAt(0).Replace("’", "\'");
+                                    temp = temp.Replace("’", "\'");
                                 }
-                                else if (order.ElementAt(0).Contains('³'))
+                                else if (temp.Contains('³'))
                                 {
-                                    order.ElementAt(0).Replace('³', '3');
+                                    temp = temp.Replace('³', '3');
                                 }
-                                else if (order.ElementAt(0).Contains('è'))
+                                else if (temp.Contains('è'))
                                 {
-                                    order.ElementAt(0).Replace('è', 'e');
+                                    temp = temp.Replace('è', 'e');
                                 }
-                                module.GetComponent<Text>().text = "" + order.ElementAt(0);
+                                module.GetComponent<Text>().text = "" + temp;
                             }
                         }
                     }
@@ -506,9 +524,9 @@ public class OrganizationScript : MonoBehaviour
             if (ignoredModules.Contains(order.ElementAt(i)))
             {
                 Debug.LogFormat("[Organization #{0}] Ignored module: '{1}' detected! Removing from possibilities...", moduleId, order.ElementAt(i));
-                if(order.ElementAt(i).Equals("Turn The Keys"))
+                if (order.ElementAt(i).Equals("Turn The Keys"))
                 {
-                    if(announceMade2 == false)
+                    if (announceMade2 == false)
                     {
                         ttks = true;
                         Debug.LogFormat("[Organization #{0}] TTKS detected! Keeping this in mind for Organization process!", moduleId);
@@ -532,23 +550,40 @@ public class OrganizationScript : MonoBehaviour
                 remove.Add(order.ElementAt(i));
             }
         }
-        for(int j = 0; j < remove.Count; j++)
+        for (int j = 0; j < remove.Count; j++)
         {
             order.Remove(remove.ElementAt(j));
         }
         order = order.Shuffle();
-        if(ttks == true)
+        
+        //Makes sure TTKS will not softlock if this module is present
+        if (ttks == true)
         {
-            foreach (string str in order.ToList())
+            int bef = 0;
+            int aft = 0;
+            bool checker = false;
+            while (!checker)
             {
-                if (ttksBefore.Contains(str))
+                bool aftcheck = false;
+                for (int i = 0; i < order.ToList().Count(); i++)
                 {
-                    order.Remove(str);
-                    order.Insert(0, str);
-                }else if (ttksAfter.Contains(str))
+                    if (ttksBefore.Contains(order.ToList()[i]))
+                    {
+                        bef = i;
+                    }
+                    else if (ttksAfter.Contains(order.ToList()[i]) && !aftcheck)
+                    {
+                        aftcheck = true;
+                        aft = i;
+                    }
+                }
+                if (bef < aft)
                 {
-                    order.Remove(str);
-                    order.Add(str);
+                    checker = true;
+                }
+                else
+                {
+                    order = order.Shuffle();
                 }
             }
         }
@@ -569,21 +604,22 @@ public class OrganizationScript : MonoBehaviour
             }
         
         string build;
-        if(order.Count != 0)
+        if (order.Count != 0)
         {
-            if (order.ElementAt(0).Contains('’'))
+            string temp = order[0];
+            if (temp.Contains('’'))
             {
-                order.ElementAt(0).Replace("’", "\'");
+                temp = temp.Replace("’", "\'");
             }
-            else if (order.ElementAt(0).Contains('³'))
+            else if (temp.Contains('³'))
             {
-                order.ElementAt(0).Replace('³', '3');
+                temp = temp.Replace('³', '3');
             }
-            else if (order.ElementAt(0).Contains('è'))
+            else if (temp.Contains('è'))
             {
-                order.ElementAt(0).Replace('è', 'e');
+                temp = temp.Replace('è', 'e');
             }
-            module.GetComponent<Text>().text = "" + order.ElementAt(0);
+            module.GetComponent<Text>().text = "" + temp;
             build = "[Organization #{0}] The order of the non-ignored modules has been determined as: ";
         }
         else
@@ -593,7 +629,7 @@ public class OrganizationScript : MonoBehaviour
         }
         for (int i = 0; i < order.Count; i++)
         {
-            if(i == (order.Count-1))
+            if (i == (order.Count-1))
             {
                 build += order.ElementAt(i);
             }
@@ -837,33 +873,11 @@ public class OrganizationScript : MonoBehaviour
         StopCoroutine("upSwitch");
     }
 
-    private IEnumerator delayModStart()
-    {
-        yield return new WaitForSeconds(1f);
-        arrow.GetComponent<Renderer>().enabled = false;
-        var serialNumber = bomb.GetSerialNumber();
-        if (!_infos.ContainsKey(serialNumber))
-            _infos[serialNumber] = new OrgBombInfo();
-        info = _infos[serialNumber];
-        info.Modules.Add(this);
-        if (Settings.disableTimeModeCooldown == true)
-        {
-            TimeModeActive = false;
-        }
-        Debug.LogFormat("[Organization #{0}] TimeMode Cooldown Active: '{1}'", moduleId, TimeModeActive);
-        generateOrder();
-        if (bomb.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count() == 0)
-        {
-            getNewSwitchPos();
-        }
-        started = true;
-    }
-
     private IEnumerator timer()
     {
         cooldown = true;
         double counter = UnityEngine.Random.Range(30, 46);
-        if(otherOrgs == true)
+        if (otherOrgs == true)
         {
             Debug.LogFormat("[Organization #{0}] Cooldown activated! There is {1} seconds of free solving until the next module is shown!", moduleId, (int)counter);
         }
@@ -881,21 +895,30 @@ public class OrganizationScript : MonoBehaviour
             counter -= 0.1;
         }
         cooldown = false;
+        if (order.Count() == 0)
+        {
+            module.GetComponent<Text>().text = "No Modules :)";
+            Debug.LogFormat("[Organization #{0}] All non-ignored modules solved! GG!", moduleId);
+            moduleSolved = true;
+            bomb.GetComponent<KMBombModule>().HandlePass();
+            yield break;
+        }
         audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.NeedyActivated, transform);
         Debug.LogFormat("[Organization #{0}] Cooldown over! The next module is now shown! '{1}'!", moduleId, order.ElementAt(0));
-        if (order.ElementAt(0).Contains('’'))
+        string temp = order[0];
+        if (temp.Contains('’'))
         {
-            order.ElementAt(0).Replace('’', '\'');
+            temp = temp.Replace("’", "\'");
         }
-        else if (order.ElementAt(0).Contains('³'))
+        else if (temp.Contains('³'))
         {
-            order.ElementAt(0).Replace('³', '3');
+            temp = temp.Replace('³', '3');
         }
-        else if (order.ElementAt(0).Contains('è'))
+        else if (temp.Contains('è'))
         {
-            order.ElementAt(0).Replace('è', 'e');
+            temp = temp.Replace('è', 'e');
         }
-        module.GetComponent<Text>().text = "" + order.ElementAt(0);
+        module.GetComponent<Text>().text = "" + temp;
         StopCoroutine("timer");
     }
 
@@ -909,7 +932,6 @@ public class OrganizationScript : MonoBehaviour
         {
             yield return null;
             buttons[0].OnInteract();
-            yield return new WaitForSeconds(0.2f);
             if (TimeModeActive == true && cooldown == true)
             {
                 yield return "sendtochat Organization is now in Cooldown!";
@@ -932,6 +954,7 @@ public class OrganizationScript : MonoBehaviour
         yield return null;
         module.GetComponent<Text>().text = "That's Unfortunate :(";
         moduleSolved = true;
+        GetComponent<KMBombModule>().HandlePass();
     }
 
     class OrganizationSettings
