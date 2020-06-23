@@ -245,20 +245,25 @@ public class OrganizationScript : MonoBehaviour
                             {
                                 List<string> displayed = new List<string>();
                                 List<bool> ready = new List<bool>();
+                                List<string> nrdisplayed = new List<string>();
+                                string tmpname = name;
+                                tmpname = tmpname.Replace("’", "\'");
+                                tmpname = tmpname.Replace('³', '3');
+                                tmpname = tmpname.Replace('è', 'e');
                                 foreach (OrganizationScript mod in info.Modules)
                                 {
-                                    displayed.Add(mod.module.GetComponent<Text>().text);
+                                    string tempname = mod.module.GetComponent<Text>().text;
+                                    displayed.Add(tempname);
                                     ready.Add(mod.readyForInput);
                                 }
-                                List<string> nrdisplayed = new List<string>();
-                                for(int i = 0; i < displayed.Count; i++)
+                                for (int i = 0; i < displayed.Count; i++)
                                 {
-                                    if(ready.ElementAt(i) == false)
+                                    if (ready.ElementAt(i) == false)
                                     {
                                         nrdisplayed.Add(displayed.ElementAt(i));
                                     }
                                 }
-                                if (nrdisplayed.Contains(name))
+                                if (nrdisplayed.Contains(tmpname))
                                 {
                                     if (name.Equals(order.ElementAt(0)))
                                     {
