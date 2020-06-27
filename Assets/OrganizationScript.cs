@@ -569,6 +569,8 @@ public class OrganizationScript : MonoBehaviour
         {
             int bef = 0;
             int aft = 0;
+            int befct = 0;
+            int aftct = 0;
             bool checker = false;
             while (!checker)
             {
@@ -578,14 +580,19 @@ public class OrganizationScript : MonoBehaviour
                     if (ttksBefore.Contains(order.ToList()[i]))
                     {
                         bef = i;
+                        befct++;
                     }
-                    else if (ttksAfter.Contains(order.ToList()[i]) && !aftcheck)
+                    else if (ttksAfter.Contains(order.ToList()[i]))
                     {
-                        aftcheck = true;
-                        aft = i;
+                        aftct++;
+                        if (!aftcheck)
+                        {
+                            aftcheck = true;
+                            aft = i;
+                        }
                     }
                 }
-                if (bef < aft)
+                if (bef < aft || befct == 0 || aftct == 0)
                 {
                     checker = true;
                 }
