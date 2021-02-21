@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using KModkit;
-using System;
-using System.Text.RegularExpressions;
+//using System;
+//using System.Text.RegularExpressions;
 using UnityEngine.UI;
 
 public class OrganizationScript : MonoBehaviour
@@ -13,7 +13,7 @@ public class OrganizationScript : MonoBehaviour
     public KMAudio audio;
     public KMBombInfo bomb;
 
-    public KMSelectable[] buttons;
+    //public KMSelectable[] buttons;
 
     public static string[] fullModuleList = null;
     private string[] ignoredModules;
@@ -26,8 +26,8 @@ public class OrganizationScript : MonoBehaviour
     private List<string> order = new List<string>();
     private List<string> solved = new List<string>();
 
-    private string nextSwitch;
-    private string currentSwitch;
+    /**private string nextSwitch;
+    private string currentSwitch;*/
 
     private bool cooldown = false;
 
@@ -47,13 +47,13 @@ public class OrganizationScript : MonoBehaviour
     int moduleId;
     private bool moduleSolved;
 
-    private bool readyForInput = false;
-    private bool detectionDone = false;
+    //private bool readyForInput = false;
+    //private bool detectionDone = false;
     private bool announceMade = false;
     private bool announceMade2 = false;
     private bool otherOrgs = false;
-    private bool started = false;
-    private bool delayed = false;
+    //private bool started = false;
+    //private bool delayed = false;
     private int orgCount = 0;
 
     private OrganizationSettings Settings = new OrganizationSettings();
@@ -65,15 +65,15 @@ public class OrganizationScript : MonoBehaviour
         Settings = modConfig.Settings;
         //Update the settings file incase there was an error during read
         modConfig.Settings = Settings;
-        nextSwitch = "";
-        currentSwitch = "Up";
+        /**nextSwitch = "";
+        currentSwitch = "Up";*/
         moduleId = moduleIdCounter++;
         moduleSolved = false;
-        foreach (KMSelectable obj in buttons)
+        /**foreach (KMSelectable obj in buttons)
         {
             KMSelectable pressed = obj;
             pressed.OnInteract += delegate () { PressButton(pressed); return false; };
-        }
+        }*/
         if (fullModuleList == null)
         {
             fullModuleList = GetComponent<KMBossModule>().GetIgnoredModules("Organization", new string[]{
@@ -134,18 +134,21 @@ public class OrganizationScript : MonoBehaviour
         generateOrder();
         if (bomb.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count() == 0)
         {
-            getNewSwitchPos();
+            //getNewSwitchPos();
+            Debug.LogFormat("[Organization #{0}] No non-ignored modules detected! Autosolving!", moduleId);
+            bomb.GetComponent<KMBombModule>().HandlePass();
+            moduleSolved = true;
         }
-        started = true;
+        //started = true;
     }
 
     void Update()
     {
-        if (order.Count == 0 && detectionDone == false && started == true)
+        /**if (order.Count == 0 && detectionDone == false && started == true)
         {
             detectionDone = true;
             readyForInput = true;
-        }
+        }*/
     }
 
     int ticker = 0;
@@ -160,14 +163,14 @@ public class OrganizationScript : MonoBehaviour
                 int progress = bomb.GetSolvedModuleNames().Count();
                 if (progress > solved.Count)
                 {
-                    Debug.LogFormat("[Organization #{0}] ---------------------------------------------------", moduleId);
+                    //Debug.LogFormat("[Organization #{0}] ---------------------------------------------------", moduleId);
                     string name = getLatestSolve(bomb.GetSolvedModuleNames(), solved);
                     if (ignoredModules.Contains(name))
                     {
                         Debug.LogFormat("[Organization #{0}] Ignored module: '{1}' has been solved", moduleId, name);
                         solved.Add(name);
                         //Switch check for ignored module solve
-                        getNewSwitchPos();
+                        //getNewSwitchPos();
                     }
                     else if (cooldown == true || TwitchAbandonModule.Any(module => module.ModuleDisplayName.Equals(name)))
                     {
@@ -198,20 +201,20 @@ public class OrganizationScript : MonoBehaviour
                             }
                         }
                         Debug.LogFormat(build, moduleId);
-                        name = name.Replace("’", "\'");
+                        /**name = name.Replace("’", "\'");
                         name = name.Replace('³', '3');
                         name = name.Replace('è', 'e');
                         if (!cooldown && module.GetComponent<Text>().text.Equals(name) && !readyForInput)
                         {
                             readyForInput = true;
                             getNewSwitchPos();
-                        }
+                        }*/
                     }
                     else
                     {
                         if (otherOrgs == true)
                         {
-                            if (readyForInput == true)
+                            /**if (readyForInput == true)
                             {
                                 Debug.LogFormat("[Organization #{0}] '{1}' has been solved and this Organization needs to be manually given the next module in order to continue! Strike! Removing from future possibilities...", moduleId, name);
                                 bomb.GetComponent<KMBombModule>().HandleStrike();
@@ -241,10 +244,10 @@ public class OrganizationScript : MonoBehaviour
                                 Debug.LogFormat(build, moduleId);
                                 getNewSwitchPos();
                             }
-                            else
+                            else*/
                             {
                                 List<string> displayed = new List<string>();
-                                List<bool> ready = new List<bool>();
+                                //List<bool> ready = new List<bool>();
                                 List<string> nrdisplayed = new List<string>();
                                 string tmpname = name;
                                 tmpname = tmpname.Replace("’", "\'");
@@ -254,11 +257,11 @@ public class OrganizationScript : MonoBehaviour
                                 {
                                     string tempname = mod.module.GetComponent<Text>().text;
                                     displayed.Add(tempname);
-                                    ready.Add(mod.readyForInput);
+                                    //ready.Add(mod.readyForInput);
                                 }
                                 for (int i = 0; i < displayed.Count; i++)
                                 {
-                                    if (ready.ElementAt(i) == false)
+                                    //if (ready.ElementAt(i) == false)
                                     {
                                         nrdisplayed.Add(displayed.ElementAt(i));
                                     }
@@ -269,9 +272,11 @@ public class OrganizationScript : MonoBehaviour
                                     {
                                         solved.Add(order.ElementAt(0));
                                         order.RemoveAt(0);
-                                        StartCoroutine(readyUpDelayed());
-                                        Debug.LogFormat("[Organization #{0}] '{1}' has been solved for this Organization! Ready for next module...", moduleId, name);
-                                        getNewSwitchPos();
+                                        //StartCoroutine(readyUpDelayed());
+                                        //Debug.LogFormat("[Organization #{0}] '{1}' has been solved for this Organization! Ready for next module...", moduleId, name);
+                                        Debug.LogFormat("[Organization #{0}] '{1}' has been solved for this Organization!", moduleId, name);
+                                        StartCoroutine(slightDelay());
+                                        //getNewSwitchPos();
                                     }
                                     else
                                     {
@@ -299,7 +304,7 @@ public class OrganizationScript : MonoBehaviour
                                             }
                                         }
                                         Debug.LogFormat(build, moduleId);
-                                        getNewSwitchPos();
+                                        //getNewSwitchPos();
                                     }
                                 }
                                 else
@@ -330,21 +335,62 @@ public class OrganizationScript : MonoBehaviour
                                         }
                                     }
                                     Debug.LogFormat(build, moduleId);
-                                    getNewSwitchPos();
+                                    //getNewSwitchPos();
                                 }
                             }
                         }
                         else
                         {
-                            if (name.Equals(order.ElementAt(0)) && (readyForInput == false))
+                            if (name.Equals(order.ElementAt(0)) /**&& (readyForInput == false)*/)
                             {
                                 solved.Add(order.ElementAt(0));
                                 order.RemoveAt(0);
-                                readyForInput = true;
-                                Debug.LogFormat("[Organization #{0}] '{1}' has been solved! Ready for next module...", moduleId, name);
-                                getNewSwitchPos();
+                                //readyForInput = true;
+                                //Debug.LogFormat("[Organization #{0}] '{1}' has been solved! Ready for next module...", moduleId, name);
+                                Debug.LogFormat("[Organization #{0}] '{1}' has been solved!", moduleId, name);
+                                if (order.Count() == 0)
+                                {
+                                    module.GetComponent<Text>().text = "No Modules :)";
+                                    Debug.LogFormat("[Organization #{0}] All non-ignored modules solved! GG!", moduleId);
+                                    moduleSolved = true;
+                                    bomb.GetComponent<KMBombModule>().HandlePass();
+                                }
+                                else
+                                {
+                                    if (TimeModeActive == true)
+                                    {
+                                        if (otherOrgs == true)
+                                        {
+                                            module.GetComponent<Text>().text = "In Cooldown...";
+                                        }
+                                        else
+                                        {
+                                            module.GetComponent<Text>().text = "In Cooldown...";
+                                        }
+                                        StartCoroutine(timer());
+                                    }
+                                    else
+                                    {
+                                        Debug.LogFormat("[Organization #{0}] The next module is now shown! '{1}'!", moduleId, order.ElementAt(0));
+                                        string temp = order[0];
+                                        if (temp.Contains('’'))
+                                        {
+                                            temp = temp.Replace("’", "\'");
+                                        }
+                                        else if (temp.Contains('³'))
+                                        {
+                                            temp = temp.Replace('³', '3');
+                                        }
+                                        else if (temp.Contains('è'))
+                                        {
+                                            temp = temp.Replace('è', 'e');
+                                        }
+                                        module.GetComponent<Text>().text = "" + temp;
+                                    }
+                                }
+                                //getNewSwitchPos();
                             }
-                            else if (readyForInput == true)
+                            /**else if (readyForInput == true)
                             {
                                 Debug.LogFormat("[Organization #{0}] '{1}' has been solved and the module needs to be manually given the next module in order to continue! Strike! Removing from future possibilities...", moduleId, name);
                                 bomb.GetComponent<KMBombModule>().HandleStrike();
@@ -373,7 +419,7 @@ public class OrganizationScript : MonoBehaviour
                                 }
                                 Debug.LogFormat(build, moduleId);
                                 getNewSwitchPos();
-                            }
+                            }*/
                             else
                             {
                                 Debug.LogFormat("[Organization #{0}] '{1}' has been solved and it was not the next module! Strike! Removing from future possibilities...", moduleId, name);
@@ -402,7 +448,7 @@ public class OrganizationScript : MonoBehaviour
                                     }
                                 }
                                 Debug.LogFormat(build, moduleId);
-                                getNewSwitchPos();
+                                //getNewSwitchPos();
                             }
                         }
                     }
@@ -411,7 +457,7 @@ public class OrganizationScript : MonoBehaviour
         }
     }
 
-    void PressButton(KMSelectable pressed)
+    /**void PressButton(KMSelectable pressed)
     {
         if (moduleSolved != true && cooldown != true && delayed != true)
         {
@@ -519,7 +565,7 @@ public class OrganizationScript : MonoBehaviour
                 }
             }
         }
-    }
+    }*/
 
     private void generateOrder()
     {
@@ -656,7 +702,7 @@ public class OrganizationScript : MonoBehaviour
         Debug.LogFormat(build, moduleId);
     }
 
-    private IEnumerator readyUpDelayed()
+    /**private IEnumerator readyUpDelayed()
     {
         delayed = true;
         yield return new WaitForSeconds(1.0f);
@@ -664,7 +710,7 @@ public class OrganizationScript : MonoBehaviour
         arrow.GetComponent<Renderer>().enabled = true;
         delayed = false;
         StopCoroutine("readyUpDelayed");
-    }
+    }*/
 
     private string getLatestSolve(List<string> s, List<string> s2)
     {
@@ -677,7 +723,7 @@ public class OrganizationScript : MonoBehaviour
         return name;
     }
 
-    private void getNewSwitchPos()
+    /**private void getNewSwitchPos()
     {
         Debug.LogFormat("[Organization #{0}] Checking Switch Position Rules...", moduleId);
         if (solved.Count == 0)
@@ -886,7 +932,7 @@ public class OrganizationScript : MonoBehaviour
             movement++;
         }
         StopCoroutine("upSwitch");
-    }
+    }*/
 
     private IEnumerator timer()
     {
@@ -937,13 +983,61 @@ public class OrganizationScript : MonoBehaviour
         StopCoroutine("timer");
     }
 
+    private IEnumerator slightDelay()
+    {
+        yield return null;
+        if (order.Count() == 0)
+        {
+            module.GetComponent<Text>().text = "No Modules :)";
+            Debug.LogFormat("[Organization #{0}] All non-ignored modules solved! GG!", moduleId);
+            moduleSolved = true;
+            bomb.GetComponent<KMBombModule>().HandlePass();
+        }
+        else
+        {
+            if (TimeModeActive == true)
+            {
+                if (otherOrgs == true)
+                {
+                    module.GetComponent<Text>().text = "In Cooldown...";
+                }
+                else
+                {
+                    module.GetComponent<Text>().text = "In Cooldown...";
+                }
+                StartCoroutine(timer());
+            }
+            else
+            {
+                Debug.LogFormat("[Organization #{0}] The next module is now shown! '{1}'!", moduleId, order.ElementAt(0));
+                string temp = order[0];
+                if (temp.Contains('’'))
+                {
+                    temp = temp.Replace("’", "\'");
+                }
+                else if (temp.Contains('³'))
+                {
+                    temp = temp.Replace('³', '3');
+                }
+                else if (temp.Contains('è'))
+                {
+                    temp = temp.Replace('è', 'e');
+                }
+                module.GetComponent<Text>().text = "" + temp;
+            }
+        }
+    }
+
     //twitch plays
     #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"!{0} continue/cont [Presses the continue button] | !{0} toggle/switch [Toggles the switch to move to the other positon (positions are either up or down)]";
+    //private readonly string TwitchHelpMessage = @"!{0} continue/cont [Presses the continue button] | !{0} toggle/switch [Toggles the switch to move to the other positon (positions are either up or down)]";
+    private readonly string TwitchHelpMessage = @"No commands available";
     #pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
-        if (Regex.IsMatch(command, @"^\s*continue\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) || Regex.IsMatch(command, @"^\s*cont\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        yield return null;
+        yield return "sendtochaterror There are no commands for Organization.";
+        /**if (Regex.IsMatch(command, @"^\s*continue\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) || Regex.IsMatch(command, @"^\s*cont\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
             yield return null;
             buttons[0].OnInteract();
@@ -958,7 +1052,7 @@ public class OrganizationScript : MonoBehaviour
             yield return null;
             buttons[1].OnInteract();
             yield break;
-        }
+        }*/
     }
 
     bool TimeModeActive;
