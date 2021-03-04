@@ -51,6 +51,7 @@ public class OrganizationScript : MonoBehaviour
     //private bool detectionDone = false;
     private bool announceMade = false;
     private bool announceMade2 = false;
+    private bool announceMade3 = false;
     private bool otherOrgs = false;
     //private bool started = false;
     //private bool delayed = false;
@@ -571,6 +572,8 @@ public class OrganizationScript : MonoBehaviour
     {
         Debug.LogFormat("[Organization #{0}] Organization process started!", moduleId);
         bool ttks = false;
+        bool access = false;
+        int accessCt = 0;
         order = bomb.GetSolvableModuleNames();
         List<string> remove = new List<string>();
         for (int i = 0; i < order.Count; i++)
@@ -601,6 +604,17 @@ public class OrganizationScript : MonoBehaviour
                         announceMade = true;
                     }
                 }
+                remove.Add(order.ElementAt(i));
+            }
+            if (order.ElementAt(i).Equals("Access Codes"))
+            {
+                if (announceMade3 == false)
+                {
+                    access = true;
+                    Debug.LogFormat("[Organization #{0}] Access Codes detected! Keeping this in mind for Organization process!", moduleId);
+                    announceMade3 = true;
+                }
+                accessCt++;
                 remove.Add(order.ElementAt(i));
             }
         }
@@ -649,9 +663,17 @@ public class OrganizationScript : MonoBehaviour
             }
         }
 
+        //Moves all Access Codes modules to the front
+        if (access)
+        {
+            for (int i = 0; i < accessCt; i++)
+                order.Insert(0, "Access Codes");
+        }
+
         //Moves backModules to the end of order list in random order
         backModules = backModules.Shuffle();
         if (Settings.enableMoveToBack)
+        {
             for (int i = 0; i < backModules.Count(); i++)
             {
                 int backCount = 0;
@@ -663,6 +685,7 @@ public class OrganizationScript : MonoBehaviour
                 for (int j = 0; j < backCount; j++)
                     order.Add(backModules[i]);
             }
+        }
         
         string build;
         if (order.Count != 0)
