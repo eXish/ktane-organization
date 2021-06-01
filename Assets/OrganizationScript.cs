@@ -581,12 +581,12 @@ public class OrganizationScript : MonoBehaviour
             if (ignoredModules.Contains(order.ElementAt(i)))
             {
                 Debug.LogFormat("[Organization #{0}] Ignored module: '{1}' detected! Removing from possibilities...", moduleId, order.ElementAt(i));
-                if (order.ElementAt(i).Equals("Turn The Keys"))
+                if (order.ElementAt(i).Equals("Turn The Keys") || order.ElementAt(i).Equals("Custom Keys"))
                 {
                     if (announceMade2 == false)
                     {
                         ttks = true;
-                        Debug.LogFormat("[Organization #{0}] TTKS detected! Keeping this in mind for Organization process!", moduleId);
+                        Debug.LogFormat("[Organization #{0}] TTKS/Custom Keys detected! Keeping this in mind for Organization process!", moduleId);
                         announceMade2 = true;
                     }
                 }
