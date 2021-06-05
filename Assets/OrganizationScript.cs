@@ -627,40 +627,31 @@ public class OrganizationScript : MonoBehaviour
         //Makes sure TTKS will not softlock if this module is present
         if (ttks == true)
         {
-            int bef = 0;
-            int aft = 0;
-            int befct = 0;
-            int aftct = 0;
-            bool checker = false;
-            while (!checker)
+            List<string> befores = new List<string>();
+            List<string> afters = new List<string>();
+            for (int i = 0; i < order.ToList().Count(); i++)
             {
-                bool aftcheck = false;
-                for (int i = 0; i < order.ToList().Count(); i++)
+                if (ttksBefore.Contains(order.ToList()[i]))
                 {
-                    if (ttksBefore.Contains(order.ToList()[i]))
-                    {
-                        bef = i;
-                        befct++;
-                    }
-                    else if (ttksAfter.Contains(order.ToList()[i]))
-                    {
-                        aftct++;
-                        if (!aftcheck)
-                        {
-                            aftcheck = true;
-                            aft = i;
-                        }
-                    }
+                    befores.Add(order.ToList()[i]);
                 }
-                if (bef < aft || befct == 0 || aftct == 0)
+                else if (ttksAfter.Contains(order.ToList()[i]))
                 {
-                    checker = true;
+                    afters.Add(order.ToList()[i]);
                 }
                 else
                 {
-                    order = order.Shuffle();
+                    int rando = Random.Range(0, 2);
+                    if (rando == 0)
+                        befores.Add(order.ToList()[i]);
+                    else
+                        afters.Add(order.ToList()[i]);
                 }
             }
+            befores = befores.Shuffle();
+            afters = afters.Shuffle();
+            order = befores;
+            order.AddRange(afters);
         }
 
         //Moves all Access Codes modules to the front
