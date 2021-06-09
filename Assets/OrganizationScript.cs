@@ -202,6 +202,34 @@ public class OrganizationScript : MonoBehaviour
                             }
                         }
                         Debug.LogFormat(build, moduleId);
+                        if (!cooldown)
+                        {
+                            if (order.Count() == 0)
+                            {
+                                module.GetComponent<Text>().text = "No Modules :)";
+                                Debug.LogFormat("[Organization #{0}] All non-ignored modules solved! GG!", moduleId);
+                                moduleSolved = true;
+                                bomb.GetComponent<KMBombModule>().HandlePass();
+                            }
+                            else if (module.GetComponent<Text>().text.Equals(solved.Last()))
+                            {
+                                Debug.LogFormat("[Organization #{0}] The next module is now shown! '{1}'!", moduleId, order.ElementAt(0));
+                                string temp = order[0];
+                                if (temp.Contains('’'))
+                                {
+                                    temp = temp.Replace("’", "\'");
+                                }
+                                else if (temp.Contains('³'))
+                                {
+                                    temp = temp.Replace('³', '3');
+                                }
+                                else if (temp.Contains('è'))
+                                {
+                                    temp = temp.Replace('è', 'e');
+                                }
+                                module.GetComponent<Text>().text = "" + temp;
+                            }
+                        }
                         /**name = name.Replace("’", "\'");
                         name = name.Replace('³', '3');
                         name = name.Replace('è', 'e');
