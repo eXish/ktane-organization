@@ -14,6 +14,7 @@ public class OrganizationScript : MonoBehaviour
     public KMBombInfo bomb;
 
     //public KMSelectable[] buttons;
+    public GameObject justSwitch;
 
     public static string[] fullModuleList = null;
     private string[] ignoredModules;
@@ -121,6 +122,7 @@ public class OrganizationScript : MonoBehaviour
 
     void OnActivate()
     {
+        justSwitch.SetActive(false);
         arrow.GetComponent<Renderer>().enabled = false;
         var serialNumber = bomb.GetSerialNumber();
         if (!_infos.ContainsKey(serialNumber))

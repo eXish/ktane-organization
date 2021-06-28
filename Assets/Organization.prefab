@@ -44,7 +44,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1028112374258576
 GameObject:
   m_ObjectHideFlags: 0
@@ -59,7 +59,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1067647242611452
 GameObject:
   m_ObjectHideFlags: 1
@@ -2773,6 +2773,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audio: {fileID: 114335410585506892}
   bomb: {fileID: 114375059033245494}
+  justSwitch: {fileID: 1135463540995048}
   module: {fileID: 1809268148720140}
   arrow: {fileID: 1398303322324062}
 --- !u!222 &222258509049210648
