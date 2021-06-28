@@ -227,12 +227,17 @@ public class OrganizationScript : MonoBehaviour
                                 {
                                     temp = temp.Replace('è', 'e');
                                 }
+                                else if (temp.Contains('ñ'))
+                                {
+                                    temp = temp.Replace('ñ', 'n');
+                                }
                                 module.GetComponent<Text>().text = "" + temp;
                             }
                         }
                         /**name = name.Replace("’", "\'");
                         name = name.Replace('³', '3');
                         name = name.Replace('è', 'e');
+                        name = name.Replace('ñ', 'n');
                         if (!cooldown && module.GetComponent<Text>().text.Equals(name) && !readyForInput)
                         {
                             readyForInput = true;
@@ -282,6 +287,7 @@ public class OrganizationScript : MonoBehaviour
                                 tmpname = tmpname.Replace("’", "\'");
                                 tmpname = tmpname.Replace('³', '3');
                                 tmpname = tmpname.Replace('è', 'e');
+                                tmpname = tmpname.Replace('ñ', 'n');
                                 foreach (OrganizationScript mod in info.Modules)
                                 {
                                     string tempname = mod.module.GetComponent<Text>().text;
@@ -414,6 +420,10 @@ public class OrganizationScript : MonoBehaviour
                                         {
                                             temp = temp.Replace('è', 'e');
                                         }
+                                        else if (temp.Contains('ñ'))
+                                        {
+                                            temp = temp.Replace('ñ', 'n');
+                                        }
                                         module.GetComponent<Text>().text = "" + temp;
                                     }
                                 }
@@ -541,6 +551,10 @@ public class OrganizationScript : MonoBehaviour
                                 else if (temp.Contains('è'))
                                 {
                                     temp = temp.Replace('è', 'e');
+                                }
+                                else if (temp.Contains('ñ'))
+                                {
+                                    temp = temp.Replace('ñ', 'n');
                                 }
                                 module.GetComponent<Text>().text = "" + temp;
                             }
@@ -721,6 +735,10 @@ public class OrganizationScript : MonoBehaviour
             else if (temp.Contains('è'))
             {
                 temp = temp.Replace('è', 'e');
+            }
+            else if (temp.Contains('ñ'))
+            {
+                temp = temp.Replace('ñ', 'n');
             }
             module.GetComponent<Text>().text = "" + temp;
             build = "[Organization #{0}] The order of the non-ignored modules has been determined as: ";
@@ -1021,6 +1039,10 @@ public class OrganizationScript : MonoBehaviour
         {
             temp = temp.Replace('è', 'e');
         }
+        else if (temp.Contains('ñ'))
+        {
+            temp = temp.Replace('ñ', 'n');
+        }
         module.GetComponent<Text>().text = "" + temp;
         StopCoroutine("timer");
     }
@@ -1064,6 +1086,10 @@ public class OrganizationScript : MonoBehaviour
                 else if (temp.Contains('è'))
                 {
                     temp = temp.Replace('è', 'e');
+                }
+                else if (temp.Contains('ñ'))
+                {
+                    temp = temp.Replace('ñ', 'n');
                 }
                 module.GetComponent<Text>().text = "" + temp;
             }
