@@ -120,9 +120,13 @@ public class OrganizationScript : MonoBehaviour
         GetComponent<KMBombModule>().OnActivate += OnActivate;
     }
 
-    void OnActivate()
+    void Start()
     {
         justSwitch.SetActive(false);
+    }
+
+    void OnActivate()
+    {
         arrow.GetComponent<Renderer>().enabled = false;
         var serialNumber = bomb.GetSerialNumber();
         if (!_infos.ContainsKey(serialNumber))
