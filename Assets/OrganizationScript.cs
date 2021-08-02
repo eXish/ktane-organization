@@ -4,8 +4,8 @@ using System.Linq;
 using UnityEngine;
 using KModkit;
 //using System;
-//using System.Text.RegularExpressions;
 using UnityEngine.UI;
+using System.Text.RegularExpressions;
 
 public class OrganizationScript : MonoBehaviour
 {
@@ -67,6 +67,23 @@ public class OrganizationScript : MonoBehaviour
         Settings = modConfig.Settings;
         //Update the settings file incase there was an error during read
         modConfig.Settings = Settings;
+        //Figure out if module is running on a mission and requesting certain settings
+        string missionDesc = KTMissionGetter.Mission.Description;
+        if (missionDesc != null)
+        {
+            Regex regex = new Regex(@"\[Organization\] ((true|false), *){2}(true|false)");
+            var match = regex.Match(missionDesc);
+            if (match.Success)
+            {
+                string[] options = match.Value.Replace("[Organization] ", "").Split(',');
+                bool[] values = new bool[options.Length];
+                for (int i = 0; i < options.Length; i++)
+                    values[i] = options[i] == "true" ? true : false;
+                Settings.ignoreSolveBased = values[0];
+                Settings.enableMoveToBack = values[1];
+                Settings.disableTimeModeCooldown = values[2];
+            }
+        }
         /**nextSwitch = "";
         currentSwitch = "Up";*/
         moduleId = moduleIdCounter++;
