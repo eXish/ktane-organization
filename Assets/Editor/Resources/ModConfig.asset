@@ -24,14 +24,14 @@ MonoBehaviour:
     you must put this string in your mission description to set their values:
 
 
-    [Organization] value, value, value
+    [Organization] value, value, value, value
 
     where value is either true or false.
 
 
     The order for the settings in this string from left to right are ignoreSolveBased,
-    enableMoveToBack, and disableTimeModeCooldown. The spaces after each comma are
-    optional.
+    enableMoveToBack, disableTimeModeCooldown, and useSwitchVersion. The spaces after
+    each comma are optional.
 
 
     HTML: https://ktane.timwi.de/HTML/Organization.html
@@ -39,11 +39,11 @@ MonoBehaviour:
     PDF: https://ktane.timwi.de/PDF/Organization.pdf
 
 
-    Organization (organizationModule) v1.4.3
+    Organization (organizationModule) v1.4.4
 
     Mod and Concept by eXish
 
     Twitch Plays supported'
-  version: 1.4.3
+  version: 1.4.4
   outputFolder: build
   previewImage: {fileID: 2800000, guid: a07c4f7f7fb2d2846af5b4dba0c28350, type: 3}
