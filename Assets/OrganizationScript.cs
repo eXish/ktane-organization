@@ -1,15 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
-using KModkit;
-//using System;
-using UnityEngine.UI;
 using System.Text.RegularExpressions;
+using KModkit;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class OrganizationScript : MonoBehaviour
 {
-
     public KMAudio audio;
     public KMBombInfo bomb;
 
@@ -24,9 +22,11 @@ public class OrganizationScript : MonoBehaviour
         "Reordered Keys", "Misordered Keys", "Recorded Keys", "Disordered Keys", "Simon Sings", "Vectors", "Game of Life Cruel", "Mastermind Cruel", "Factory Maze", "Simon Sends", "Quintuples",
         "The Hypercube", "The Ultracube", "Lombax Cubes", "Bamboozling Button", "Simon Stores", "The Cube", "The Sphere", "Ten-Button Color Code", "LEGOs", "Unfair Cipher", "Ultimate Cycle", "Ultimate Cipher", "Bamboozled Again" };
 
-    private string[] ttksBefore = { "Morse Code","Wires","Two Bits","The Button","Colour Flash","Round Keypad","Password","Who's On First","Crazy Talk","Keypad","Listening","Orientation Cube" };
-    private string[] ttksAfter = { "Semaphore", "Combination Lock", "Simon Says", "Astrology", "Switches", "Plumbing", "Maze", "Memory", "Complicated Wires", "Wire Sequence", "Cryptography" };
+    private static readonly string[] ttksBefore = { "Morse Code", "Wires", "Two Bits", "The Button", "Colour Flash", "Round Keypad", "Password", "Who's On First", "Crazy Talk", "Keypad", "Listening", "Orientation Cube" };
+    private static readonly string[] ttksAfter = { "Semaphore", "Combination Lock", "Simon Says", "Astrology", "Switches", "Plumbing", "Maze", "Memory", "Complicated Wires", "Wire Sequence", "Cryptography" };
     private List<string> order = new List<string>();
+    private List<string> mysteryModuleHiddens = new List<string>();
+    private List<string> mysteryModuleKeys = new List<string>();
     private List<string> solved = new List<string>();
 
     private string nextSwitch;
@@ -52,9 +52,10 @@ public class OrganizationScript : MonoBehaviour
 
     private bool readyForInput = false;
     private bool detectionDone = false;
-    private bool announceMade = false;
-    private bool announceMade2 = false;
-    private bool announceMade3 = false;
+    private bool announcedOtherOrg = false;
+    private bool announcedTTKsCustomKeys = false;
+    private bool announcedAccessCodes = false;
+    private bool announcedMysteryModule = false;
     private bool otherOrgs = false;
     private bool started = false;
     private bool delayed = false;
@@ -67,7 +68,7 @@ public class OrganizationScript : MonoBehaviour
         ModConfig<OrganizationSettings> modConfig = new ModConfig<OrganizationSettings>("OrganizationSettings");
         //Read from the settings file, or create one if one doesn't exist
         Settings = modConfig.Settings;
-        //Update the settings file incase there was an error during read
+        //Update the settings file in case there was an error during read
         modConfig.Settings = Settings;
         //Figure out if module is running on a mission and requesting certain settings
         string missionDesc = KTMissionGetter.Mission.Description;
@@ -123,7 +124,7 @@ public class OrganizationScript : MonoBehaviour
         List<IEnumerable<string>> ignoreLists = new List<IEnumerable<string>>();
         ignoredModules = fullModuleList.ToArray();
         //Split the lists at empty values
-        while (ignoredModules.Count() > 0)
+        while (ignoredModules.Length > 0)
         {
             ignoreLists.Add(ignoredModules.TakeWhile(x => x != ""));
             ignoredModules = ignoredModules.SkipWhile(x => x != "").Skip(1).ToArray();
@@ -153,6 +154,13 @@ public class OrganizationScript : MonoBehaviour
         }
         else
             TwitchHelpMessage = @"!{0} continue/cont [Presses the continue button] | !{0} toggle/switch [Toggles the switch to move to the other positon (positions are either up or down)]";
+    }
+
+    public void MysteryModuleNotification(List<string> keys, string hidden)
+    {
+        Debug.LogFormat("[Organization #{0}] Mystery Module notified me that it is hiding '{1}' and its keys are '{2}'.", moduleId, hidden, keys.Join(", "));
+        mysteryModuleHiddens.Add(hidden);
+        mysteryModuleKeys.AddRange(keys);
     }
 
     void OnActivate()
@@ -238,11 +246,11 @@ public class OrganizationScript : MonoBehaviour
                         {
                             if (i == (order.Count - 1))
                             {
-                                build += order.ElementAt(i);
+                                build += order[i];
                             }
                             else
                             {
-                                build += (order.ElementAt(i) + ", ");
+                                build += (order[i] + ", ");
                             }
                         }
                         Debug.LogFormat(build, moduleId);
@@ -265,7 +273,7 @@ public class OrganizationScript : MonoBehaviour
                             }
                             else if (module.GetComponent<Text>().text.Equals(solved.Last()))
                             {
-                                Debug.LogFormat("[Organization #{0}] The next module is now shown! '{1}'!", moduleId, order.ElementAt(0));
+                                Debug.LogFormat("[Organization #{0}] The next module is now shown! '{1}'!", moduleId, order[0]);
                                 string temp = order[0];
                                 if (temp.Contains('’'))
                                 {
@@ -295,7 +303,7 @@ public class OrganizationScript : MonoBehaviour
                             {
                                 Debug.LogFormat("[Organization #{0}] '{1}' has been solved and this Organization needs to be manually given the next module in order to continue! Strike! Removing from future possibilities...", moduleId, name);
                                 bomb.GetComponent<KMBombModule>().HandleStrike();
-                                audio.GetComponent<KMAudio>().PlaySoundAtTransform("order", transform);
+                                audio.PlaySoundAtTransform("order", transform);
                                 solved.Add(name);
                                 order.Remove(name);
                                 string build;
@@ -311,11 +319,11 @@ public class OrganizationScript : MonoBehaviour
                                 {
                                     if (i == (order.Count - 1))
                                     {
-                                        build += order.ElementAt(i);
+                                        build += order[i];
                                     }
                                     else
                                     {
-                                        build += (order.ElementAt(i) + ", ");
+                                        build += (order[i] + ", ");
                                     }
                                 }
                                 Debug.LogFormat(build, moduleId);
@@ -342,19 +350,19 @@ public class OrganizationScript : MonoBehaviour
                                 {
                                     if (Settings.useSwitchVersion)
                                     {
-                                        if (ready.ElementAt(i) == false)
-                                            nrdisplayed.Add(displayed.ElementAt(i));
+                                        if (ready[i] == false)
+                                            nrdisplayed.Add(displayed[i]);
                                     }
                                     else
                                     {
-                                        nrdisplayed.Add(displayed.ElementAt(i));
+                                        nrdisplayed.Add(displayed[i]);
                                     }
                                 }
                                 if (nrdisplayed.Contains(tmpname))
                                 {
-                                    if (name.Equals(order.ElementAt(0)))
+                                    if (name.Equals(order[0]))
                                     {
-                                        solved.Add(order.ElementAt(0));
+                                        solved.Add(order[0]);
                                         order.RemoveAt(0);
                                         if (Settings.useSwitchVersion)
                                         {
@@ -386,11 +394,11 @@ public class OrganizationScript : MonoBehaviour
                                         {
                                             if (i == (order.Count - 1))
                                             {
-                                                build += order.ElementAt(i);
+                                                build += order[i];
                                             }
                                             else
                                             {
-                                                build += (order.ElementAt(i) + ", ");
+                                                build += (order[i] + ", ");
                                             }
                                         }
                                         Debug.LogFormat(build, moduleId);
@@ -402,7 +410,7 @@ public class OrganizationScript : MonoBehaviour
                                 {
                                     Debug.LogFormat("[Organization #{0}] '{1}' has been solved and it was not the next module on ANY Organization! Strike! Removing from future possibilities...", moduleId, name);
                                     bomb.GetComponent<KMBombModule>().HandleStrike();
-                                    audio.GetComponent<KMAudio>().PlaySoundAtTransform("order", transform);
+                                    audio.PlaySoundAtTransform("order", transform);
                                     solved.Add(name);
                                     order.Remove(name);
                                     string build;
@@ -418,11 +426,11 @@ public class OrganizationScript : MonoBehaviour
                                     {
                                         if (i == (order.Count - 1))
                                         {
-                                            build += order.ElementAt(i);
+                                            build += order[i];
                                         }
                                         else
                                         {
-                                            build += (order.ElementAt(i) + ", ");
+                                            build += (order[i] + ", ");
                                         }
                                     }
                                     Debug.LogFormat(build, moduleId);
@@ -433,9 +441,9 @@ public class OrganizationScript : MonoBehaviour
                         }
                         else
                         {
-                            if ((!Settings.useSwitchVersion && name.Equals(order.ElementAt(0))) || (Settings.useSwitchVersion && name.Equals(order.ElementAt(0)) && readyForInput == false))
+                            if ((!Settings.useSwitchVersion && name.Equals(order[0])) || (Settings.useSwitchVersion && name.Equals(order[0]) && readyForInput == false))
                             {
-                                solved.Add(order.ElementAt(0));
+                                solved.Add(order[0]);
                                 order.RemoveAt(0);
                                 if (Settings.useSwitchVersion)
                                 {
@@ -469,7 +477,7 @@ public class OrganizationScript : MonoBehaviour
                                         }
                                         else
                                         {
-                                            Debug.LogFormat("[Organization #{0}] The next module is now shown! '{1}'!", moduleId, order.ElementAt(0));
+                                            Debug.LogFormat("[Organization #{0}] The next module is now shown! '{1}'!", moduleId, order[0]);
                                             string temp = order[0];
                                             if (temp.Contains('’'))
                                             {
@@ -496,7 +504,7 @@ public class OrganizationScript : MonoBehaviour
                             {
                                 Debug.LogFormat("[Organization #{0}] '{1}' has been solved and the module needs to be manually given the next module in order to continue! Strike! Removing from future possibilities...", moduleId, name);
                                 bomb.GetComponent<KMBombModule>().HandleStrike();
-                                audio.GetComponent<KMAudio>().PlaySoundAtTransform("order", transform);
+                                audio.PlaySoundAtTransform("order", transform);
                                 solved.Add(name);
                                 order.Remove(name);
                                 string build;
@@ -512,11 +520,11 @@ public class OrganizationScript : MonoBehaviour
                                 {
                                     if (i == (order.Count - 1))
                                     {
-                                        build += order.ElementAt(i);
+                                        build += order[i];
                                     }
                                     else
                                     {
-                                        build += (order.ElementAt(i) + ", ");
+                                        build += (order[i] + ", ");
                                     }
                                 }
                                 Debug.LogFormat(build, moduleId);
@@ -526,7 +534,7 @@ public class OrganizationScript : MonoBehaviour
                             {
                                 Debug.LogFormat("[Organization #{0}] '{1}' has been solved and it was not the next module! Strike! Removing from future possibilities...", moduleId, name);
                                 bomb.GetComponent<KMBombModule>().HandleStrike();
-                                audio.GetComponent<KMAudio>().PlaySoundAtTransform("order", transform);
+                                audio.PlaySoundAtTransform("order", transform);
                                 solved.Add(name);
                                 order.Remove(name);
                                 string build;
@@ -542,11 +550,11 @@ public class OrganizationScript : MonoBehaviour
                                 {
                                     if (i == (order.Count - 1))
                                     {
-                                        build += order.ElementAt(i);
+                                        build += order[i];
                                     }
                                     else
                                     {
-                                        build += (order.ElementAt(i) + ", ");
+                                        build += (order[i] + ", ");
                                     }
                                 }
                                 Debug.LogFormat(build, moduleId);
@@ -564,7 +572,7 @@ public class OrganizationScript : MonoBehaviour
     {
         if (moduleSolved != true && cooldown != true && delayed != true && Settings.useSwitchVersion)
         {
-            audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, pressed.transform);
+            audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, pressed.transform);
             pressed.AddInteractionPunch(0.25f);
             if (buttons[0] == pressed)
             {
@@ -588,7 +596,7 @@ public class OrganizationScript : MonoBehaviour
                         {
                             if (TimeModeActive == true)
                             {
-                                audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, transform);
+                                audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, transform);
                                 if (otherOrgs == true)
                                 {
                                     module.GetComponent<Text>().text = "In Cooldown...";
@@ -601,8 +609,8 @@ public class OrganizationScript : MonoBehaviour
                             }
                             else
                             {
-                                audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, transform);
-                                Debug.LogFormat("[Organization #{0}] The next module is now shown! '{1}'!", moduleId, order.ElementAt(0));
+                                audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, transform);
+                                Debug.LogFormat("[Organization #{0}] The next module is now shown! '{1}'!", moduleId, order[0]);
                                 string temp = order[0];
                                 if (temp.Contains('’'))
                                 {
@@ -631,15 +639,15 @@ public class OrganizationScript : MonoBehaviour
                         int rand = UnityEngine.Random.Range(0, 3);
                         if (rand == 0)
                         {
-                            audio.GetComponent<KMAudio>().PlaySoundAtTransform("wrong1", transform);
+                            audio.PlaySoundAtTransform("wrong1", transform);
                         }
                         else if (rand == 1)
                         {
-                            audio.GetComponent<KMAudio>().PlaySoundAtTransform("wrong2", transform);
+                            audio.PlaySoundAtTransform("wrong2", transform);
                         }
                         else
                         {
-                            audio.GetComponent<KMAudio>().PlaySoundAtTransform("wrong3", transform);
+                            audio.PlaySoundAtTransform("wrong3", transform);
                         }
                     }
                 }
@@ -648,24 +656,28 @@ public class OrganizationScript : MonoBehaviour
                     Debug.LogFormat("[Organization #{0}] The current module has not been solved yet! Strike!", moduleId);
                     bomb.GetComponent<KMBombModule>().HandleStrike();
                     int rand = UnityEngine.Random.Range(0, 3);
-                    if(rand == 0)
+                    if (rand == 0)
                     {
-                        audio.GetComponent<KMAudio>().PlaySoundAtTransform("wrong1", transform);
-                    }else if (rand == 1)
+                        audio.PlaySoundAtTransform("wrong1", transform);
+                    }
+                    else if (rand == 1)
                     {
-                        audio.GetComponent<KMAudio>().PlaySoundAtTransform("wrong2", transform);
-                    }else
+                        audio.PlaySoundAtTransform("wrong2", transform);
+                    }
+                    else
                     {
-                        audio.GetComponent<KMAudio>().PlaySoundAtTransform("wrong3", transform);
+                        audio.PlaySoundAtTransform("wrong3", transform);
                     }
                 }
-            }else if (buttons[1] == pressed)
+            }
+            else if (buttons[1] == pressed)
             {
                 if (currentSwitch.Equals("Up"))
                 {
                     currentSwitch = "Down";
                     StartCoroutine(downSwitch());
-                }else if (currentSwitch.Equals("Down"))
+                }
+                else if (currentSwitch.Equals("Down"))
                 {
                     currentSwitch = "Up";
                     StartCoroutine(upSwitch());
@@ -678,85 +690,93 @@ public class OrganizationScript : MonoBehaviour
     {
         Debug.LogFormat("[Organization #{0}] Organization process started!", moduleId);
         bool ttks = false;
+        bool mm = false;
         bool access = false;
         int accessCt = 0;
         order = bomb.GetSolvableModuleNames();
+
         List<string> remove = new List<string>();
+        List<string> moveToEnd = new List<string>();
+
         for (int i = 0; i < order.Count; i++)
         {
-            if (ignoredModules.Contains(order.ElementAt(i)))
+            if (ignoredModules.Contains(order[i]))
             {
-                Debug.LogFormat("[Organization #{0}] Ignored module: '{1}' detected! Removing from possibilities...", moduleId, order.ElementAt(i));
-                if (order.ElementAt(i).Equals("Turn The Keys") || order.ElementAt(i).Equals("Custom Keys"))
-                {
-                    if (announceMade2 == false)
-                    {
-                        ttks = true;
-                        Debug.LogFormat("[Organization #{0}] TTKS/Custom Keys detected! Keeping this in mind for Organization process!", moduleId);
-                        announceMade2 = true;
-                    }
-                }
-                if (order.ElementAt(i).Equals("Organization"))
-                {
-                    orgCount++;
-                    if(orgCount > 1 && announceMade == false)
-                    {
-                        otherOrgs = true;
-                        Debug.LogFormat("[Organization #{0}] Other Organizations detected! Making sure to only strike for what is not on display on ANY of the Organizations!", moduleId);
-                        /**Debug.LogFormat("[Organization #{0}] Other Organizations detected! Autosolving!", moduleId);
-                        module.GetComponent<Text>().text = "That's Unfortunate :(";
-                        bomb.GetComponent<KMBombModule>().HandlePass();
-                        moduleSolved = true;*/
-                        announceMade = true;
-                    }
-                }
-                remove.Add(order.ElementAt(i));
+                Debug.LogFormat("[Organization #{0}] Ignored module: '{1}' detected! Removing from possibilities...", moduleId, order[i]);
+                remove.Add(order[i]);
             }
-            if (order.ElementAt(i).Equals("Access Codes"))
+            if (order[i].Equals("Turn The Keys") || order[i].Equals("Custom Keys"))
             {
-                if (announceMade3 == false)
+                if (announcedTTKsCustomKeys == false)
+                {
+                    ttks = true;
+                    Debug.LogFormat("[Organization #{0}] TTKS/Custom Keys detected! Keeping this in mind for Organization process!", moduleId);
+                    announcedTTKsCustomKeys = true;
+                }
+            }
+            if (order[i].Equals("Mystery Module"))
+            {
+                if (announcedMysteryModule == false)
+                {
+                    mm = true;
+                    Debug.LogFormat("[Organization #{0}] Mystery Module detected! Keeping this in mind for Organization process!", moduleId);
+                    announcedMysteryModule = true;
+                }
+            }
+            if (order[i].Equals("Organization"))
+            {
+                orgCount++;
+                if (orgCount > 1 && announcedOtherOrg == false)
+                {
+                    otherOrgs = true;
+                    Debug.LogFormat("[Organization #{0}] Other Organizations detected! Making sure to only strike for what is not on display on ANY of the Organizations!", moduleId);
+                    announcedOtherOrg = true;
+                }
+            }
+            if (order[i].Equals("Access Codes"))
+            {
+                if (announcedAccessCodes == false)
                 {
                     access = true;
                     Debug.LogFormat("[Organization #{0}] Access Codes detected! Keeping this in mind for Organization process!", moduleId);
-                    announceMade3 = true;
+                    announcedAccessCodes = true;
                 }
                 accessCt++;
-                remove.Add(order.ElementAt(i));
+                remove.Add(order[i]);
             }
         }
         for (int j = 0; j < remove.Count; j++)
-        {
-            order.Remove(remove.ElementAt(j));
-        }
-        order = order.Shuffle();
-        
-        //Makes sure TTKS will not softlock if this module is present
-        if (ttks == true)
+            order.Remove(remove[j]);
+        order.Shuffle();
+
+        //Makes sure TTKs/Custom Keys/Mystery Module will not softlock if this module is present
+        if (ttks || mm)
         {
             List<string> befores = new List<string>();
+            int mms = 0;
             List<string> afters = new List<string>();
-            for (int i = 0; i < order.ToList().Count(); i++)
+            for (int i = 0; i < order.Count; i++)
             {
-                if (ttksBefore.Contains(order.ToList()[i]))
-                {
-                    befores.Add(order.ToList()[i]);
-                }
-                else if (ttksAfter.Contains(order.ToList()[i]))
-                {
-                    afters.Add(order.ToList()[i]);
-                }
+                if (mm && order[i] == "Mystery Module")
+                    mms++;
+                else if ((ttks && ttksBefore.Contains(order[i])) || (mm && mysteryModuleKeys.Contains(order[i])))
+                    befores.Add(order[i]);
+                else if ((ttks && ttksAfter.Contains(order[i])) || (mm && mysteryModuleHiddens.Contains(order[i])))
+                    afters.Add(order[i]);
                 else
                 {
                     int rando = Random.Range(0, 2);
                     if (rando == 0)
-                        befores.Add(order.ToList()[i]);
+                        befores.Add(order[i]);
                     else
-                        afters.Add(order.ToList()[i]);
+                        afters.Add(order[i]);
                 }
             }
             befores = befores.Shuffle();
             afters = afters.Shuffle();
             order = befores;
+            for (var i = 0; i < mms; i++)
+                order.Add("Mystery Module");
             order.AddRange(afters);
         }
 
@@ -775,7 +795,7 @@ public class OrganizationScript : MonoBehaviour
             {
                 int backCount = 0;
                 for (int j = 0; j < order.Count; j++)
-                    if (order.ElementAt(j).Equals(backModules[i]))
+                    if (order[j].Equals(backModules[i]))
                         backCount++;
                 for (int j = 0; j < backCount; j++)
                     order.Remove(backModules[i]);
@@ -783,47 +803,22 @@ public class OrganizationScript : MonoBehaviour
                     order.Add(backModules[i]);
             }
         }
-        
-        string build;
+
         if (order.Count != 0)
         {
-            string temp = order[0];
-            if (temp.Contains('’'))
-            {
-                temp = temp.Replace("’", "\'");
-            }
-            else if (temp.Contains('³'))
-            {
-                temp = temp.Replace('³', '3');
-            }
-            else if (temp.Contains('è'))
-            {
-                temp = temp.Replace('è', 'e');
-            }
-            else if (temp.Contains('ñ'))
-            {
-                temp = temp.Replace('ñ', 'n');
-            }
+            string temp = order[0]
+                .Replace("’", "\'")
+                .Replace('³', '3')
+                .Replace('è', 'e')
+                .Replace('ñ', 'n');
             module.GetComponent<Text>().text = "" + temp;
-            build = "[Organization #{0}] The order of the non-ignored modules has been determined as: ";
+            Debug.LogFormat("[Organization #{0}] The order of the non-ignored modules has been determined as: {1}", moduleId, order.Join(", "));
         }
         else
         {
-            build = "[Organization #{0}] The order of the non-ignored modules has been determined as: none";
+            Debug.LogFormat("[Organization #{0}] The order of the non-ignored modules has been determined as: none", moduleId);
             module.GetComponent<Text>().text = "No Modules :)";
         }
-        for (int i = 0; i < order.Count; i++)
-        {
-            if (i == (order.Count-1))
-            {
-                build += order.ElementAt(i);
-            }
-            else
-            {
-                build += (order.ElementAt(i) + ", ");
-            }
-        }
-        Debug.LogFormat(build, moduleId);
     }
 
     private IEnumerator readyUpDelayed()
@@ -838,13 +833,9 @@ public class OrganizationScript : MonoBehaviour
 
     private string getLatestSolve(List<string> s, List<string> s2)
     {
-        string name = "";
-        for(int i = 0; i < s2.Count; i++)
-        {
-            s.Remove(s2.ElementAt(i));
-        }
-        name = s.ElementAt(0);
-        return name;
+        for (int i = 0; i < s2.Count; i++)
+            s.Remove(s2[i]);
+        return s[0];
     }
 
     private void getNewSwitchPos()
@@ -862,7 +853,7 @@ public class OrganizationScript : MonoBehaviour
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 2 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(solved.Count - 1).Equals("The Digit") || solved.ElementAt(solved.Count - 1).Equals("Mega Man 2") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
+            else if (solved[solved.Count - 1].Equals("The Digit") || solved[solved.Count - 1].Equals("Mega Man 2") || solved[solved.Count - 1].Equals("Unfair Cipher"))
             {
                 nextSwitch = "Up";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 3 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
@@ -900,7 +891,7 @@ public class OrganizationScript : MonoBehaviour
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 2 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(solved.Count - 1).Equals("The Digit") || solved.ElementAt(solved.Count - 1).Equals("Mega Man 2") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
+            else if (solved[solved.Count - 1].Equals("The Digit") || solved[solved.Count - 1].Equals("Mega Man 2") || solved[solved.Count - 1].Equals("Unfair Cipher"))
             {
                 nextSwitch = "Up";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 3 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
@@ -943,7 +934,7 @@ public class OrganizationScript : MonoBehaviour
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 2 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(solved.Count - 1).Equals("The Digit") || solved.ElementAt(solved.Count - 1).Equals("Mega Man 2") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
+            else if (solved[solved.Count - 1].Equals("The Digit") || solved[solved.Count - 1].Equals("Mega Man 2") || solved[solved.Count - 1].Equals("Unfair Cipher"))
             {
                 nextSwitch = "Up";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 3 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
@@ -986,7 +977,7 @@ public class OrganizationScript : MonoBehaviour
                 nextSwitch = "Down";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 2 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
             }
-            else if (solved.ElementAt(solved.Count - 1).Equals("The Digit") || solved.ElementAt(solved.Count - 1).Equals("Mega Man 2") || solved.ElementAt(solved.Count - 1).Equals("Unfair Cipher"))
+            else if (solved[solved.Count - 1].Equals("The Digit") || solved[solved.Count - 1].Equals("Mega Man 2") || solved[solved.Count - 1].Equals("Unfair Cipher"))
             {
                 nextSwitch = "Up";
                 Debug.LogFormat("[Organization #{0}] Switch Table Rule 3 is true! This makes the new required switch position '{1}'!", moduleId, nextSwitch);
@@ -1022,15 +1013,11 @@ public class OrganizationScript : MonoBehaviour
     private int vowelCount(string s)
     {
         int vowcount = 0;
-        char[] vowels = { 'A','E','O','I','U' };
-        s = s.ToUpper();
-        for(int i = 0; i < s.Length; i++)
-        {
-            if (vowels.Contains(s.ElementAt(i)))
-            {
+        char[] vowels = { 'A', 'E', 'O', 'I', 'U' };
+        s = s.ToUpperInvariant();
+        for (int i = 0; i < s.Length; i++)
+            if (vowels.Contains(s[i]))
                 vowcount++;
-            }
-        }
         return vowcount;
     }
 
@@ -1064,18 +1051,18 @@ public class OrganizationScript : MonoBehaviour
         double counter = UnityEngine.Random.Range(30, 46);
         if (otherOrgs == true)
         {
-            Debug.LogFormat("[Organization #{0}] Cooldown activated! There is {1} seconds of free solving until the next module is shown!", moduleId, (int)counter);
+            Debug.LogFormat("[Organization #{0}] Cooldown activated! There is {1} seconds of free solving until the next module is shown!", moduleId, (int) counter);
         }
         else
         {
-            Debug.LogFormat("[Organization #{0}] Cooldown activated! There is {1} seconds until the next module is shown! (No guaranteed free solves due to other orgs)", moduleId, (int)counter);
+            Debug.LogFormat("[Organization #{0}] Cooldown activated! There is {1} seconds until the next module is shown! (No guaranteed free solves due to other orgs)", moduleId, (int) counter);
         }
-        while(counter > 0)
+        while (counter > 0)
         {
             yield return new WaitForSeconds(0.1f);
-            if(counter < 11)
+            if (counter < 11)
             {
-                module.GetComponent<Text>().text = ""+(int)counter;
+                module.GetComponent<Text>().text = "" + (int) counter;
             }
             counter -= 0.1;
         }
@@ -1088,8 +1075,8 @@ public class OrganizationScript : MonoBehaviour
             bomb.GetComponent<KMBombModule>().HandlePass();
             yield break;
         }
-        audio.GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.NeedyActivated, transform);
-        Debug.LogFormat("[Organization #{0}] Cooldown over! The next module is now shown! '{1}'!", moduleId, order.ElementAt(0));
+        audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.NeedyActivated, transform);
+        Debug.LogFormat("[Organization #{0}] Cooldown over! The next module is now shown! '{1}'!", moduleId, order[0]);
         string temp = order[0];
         if (temp.Contains('’'))
         {
@@ -1130,7 +1117,7 @@ public class OrganizationScript : MonoBehaviour
             }
             else
             {
-                Debug.LogFormat("[Organization #{0}] The next module is now shown! '{1}'!", moduleId, order.ElementAt(0));
+                Debug.LogFormat("[Organization #{0}] The next module is now shown! '{1}'!", moduleId, order[0]);
                 string temp = order[0];
                 if (temp.Contains('’'))
                 {
@@ -1154,9 +1141,9 @@ public class OrganizationScript : MonoBehaviour
     }
 
     //twitch plays
-    #pragma warning disable 414
+#pragma warning disable 414
     private string TwitchHelpMessage = @"No commands available";
-    #pragma warning restore 414
+#pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
         if (!Settings.useSwitchVersion)
