@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using KModkit;
 using UnityEngine;
@@ -89,6 +91,14 @@ public class OrganizationScript : MonoBehaviour
                 Settings.disableTimeModeCooldown = values[2];
                 Settings.useSwitchVersion = values[3];
             }
+        }
+        //Force the module to toggle certain settings for the Switch Madness mission
+        if (GetMissionID() == "mod_madnessMissionPack_switchMadness")
+        {
+            Settings.ignoreSolveBased = true;
+            Settings.enableMoveToBack = true;
+            Settings.disableTimeModeCooldown = false;
+            Settings.useSwitchVersion = true;
         }
         module.GetComponent<Text>().text = "";
         nextSwitch = "";
@@ -768,7 +778,7 @@ public class OrganizationScript : MonoBehaviour
                     afters.Add(order[i]);
                 else
                 {
-                    int rando = Random.Range(0, 2);
+                    int rando = UnityEngine.Random.Range(0, 2);
                     if (rando == 0)
                         befores.Add(order[i]);
                     else
@@ -1022,6 +1032,22 @@ public class OrganizationScript : MonoBehaviour
             if (vowels.Contains(s[i]))
                 vowcount++;
         return vowcount;
+    }
+
+    private string GetMissionID()
+    {
+        try
+        {
+            Component gameplayState = GameObject.Find("GameplayState(Clone)").GetComponent("GameplayState");
+            Type type = gameplayState.GetType();
+            FieldInfo fieldMission = type.GetField("MissionToLoad", BindingFlags.Public | BindingFlags.Static);
+            return fieldMission.GetValue(gameplayState).ToString();
+        }
+
+        catch (NullReferenceException)
+        {
+            return "undefined";
+        }
     }
 
     private IEnumerator downSwitch()

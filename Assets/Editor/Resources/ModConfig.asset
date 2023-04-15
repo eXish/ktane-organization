@@ -39,11 +39,11 @@ MonoBehaviour:
     PDF: https://ktane.timwi.de/PDF/Organization.pdf
 
 
-    Organization (organizationModule) v1.4.8
+    Organization (organizationModule) v1.4.9
 
     Mod and Concept by eXish
 
     Twitch Plays supported'
-  version: 1.4.8
+  version: 1.4.9
   outputFolder: build
   previewImage: {fileID: 2800000, guid: a07c4f7f7fb2d2846af5b4dba0c28350, type: 3}
