@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using KModkit;
 using UnityEngine;
@@ -91,14 +89,6 @@ public class OrganizationScript : MonoBehaviour
                 Settings.disableTimeModeCooldown = values[2];
                 Settings.useSwitchVersion = values[3];
             }
-        }
-        //Force the module to toggle certain settings for the Switch Madness mission
-        if (GetMissionID() == "mod_madnessMissionPack_switchMadness")
-        {
-            Settings.ignoreSolveBased = true;
-            Settings.enableMoveToBack = true;
-            Settings.disableTimeModeCooldown = false;
-            Settings.useSwitchVersion = true;
         }
         module.GetComponent<Text>().text = "";
         nextSwitch = "";
@@ -649,7 +639,7 @@ public class OrganizationScript : MonoBehaviour
                     {
                         Debug.LogFormat("[Organization #{0}] The switch is not in the correct position (currently '{1}')! Strike!", moduleId, currentSwitch);
                         bomb.GetComponent<KMBombModule>().HandleStrike();
-                        int rand = UnityEngine.Random.Range(0, 3);
+                        int rand = Random.Range(0, 3);
                         if (rand == 0)
                         {
                             audio.PlaySoundAtTransform("wrong1", transform);
@@ -668,7 +658,7 @@ public class OrganizationScript : MonoBehaviour
                 {
                     Debug.LogFormat("[Organization #{0}] The current module has not been solved yet! Strike!", moduleId);
                     bomb.GetComponent<KMBombModule>().HandleStrike();
-                    int rand = UnityEngine.Random.Range(0, 3);
+                    int rand = Random.Range(0, 3);
                     if (rand == 0)
                     {
                         audio.PlaySoundAtTransform("wrong1", transform);
@@ -778,7 +768,7 @@ public class OrganizationScript : MonoBehaviour
                     afters.Add(order[i]);
                 else
                 {
-                    int rando = UnityEngine.Random.Range(0, 2);
+                    int rando = Random.Range(0, 2);
                     if (rando == 0)
                         befores.Add(order[i]);
                     else
@@ -1034,22 +1024,6 @@ public class OrganizationScript : MonoBehaviour
         return vowcount;
     }
 
-    private string GetMissionID()
-    {
-        try
-        {
-            Component gameplayState = GameObject.Find("GameplayState(Clone)").GetComponent("GameplayState");
-            Type type = gameplayState.GetType();
-            FieldInfo fieldMission = type.GetField("MissionToLoad", BindingFlags.Public | BindingFlags.Static);
-            return fieldMission.GetValue(gameplayState).ToString();
-        }
-
-        catch (NullReferenceException)
-        {
-            return "undefined";
-        }
-    }
-
     private IEnumerator downSwitch()
     {
         int movement = 0;
@@ -1077,7 +1051,7 @@ public class OrganizationScript : MonoBehaviour
     private IEnumerator timer()
     {
         cooldown = true;
-        double counter = UnityEngine.Random.Range(30, 46);
+        double counter = Random.Range(30, 46);
         if (otherOrgs == true)
         {
             Debug.LogFormat("[Organization #{0}] Cooldown activated! There is {1} seconds of free solving until the next module is shown!", moduleId, (int) counter);
