@@ -83,7 +83,7 @@ public class OrganizationScript : MonoBehaviour
                 string[] options = match.Value.Replace("[Organization] ", "").Split(',');
                 bool[] values = new bool[options.Length];
                 for (int i = 0; i < options.Length; i++)
-                    values[i] = options[i] == "true" ? true : false;
+                    values[i] = options[i].Trim() == "true" ? true : false;
                 Settings.ignoreSolveBased = values[0];
                 Settings.enableMoveToBack = values[1];
                 Settings.disableTimeModeCooldown = values[2];
