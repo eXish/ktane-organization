@@ -58,6 +58,7 @@ public class OrganizationScript : MonoBehaviour
     private bool announcedTTKsCustomKeys = false;
     private bool announcedAccessCodes = false;
     private bool announcedMysteryModule = false;
+    private bool announcedSwordOfDamocles = false;
     private bool otherOrgs = false;
     private bool started = false;
     private bool delayed = false;
@@ -220,6 +221,21 @@ public class OrganizationScript : MonoBehaviour
                     if (Settings.useSwitchVersion)
                         Debug.LogFormat("[Organization #{0}] ---------------------------------------------------", moduleId);
                     string name = getLatestSolve(bomb.GetSolvedModuleNames(), solved);
+                    bool sodSolve = false;
+                    if (announcedSwordOfDamocles)
+                    {
+                        var sodType = ReflectionHelper.FindType("SwordOfDamocles", "SwordOfDamocles");
+                        Object[] sods = FindObjectsOfType(sodType);
+                        for (int i = 0; i < sods.Length; i++)
+                        {
+                            if (name.Equals(sods[i].GetValue<string>("AHardPlace")))
+                            {
+                                sodSolve = true;
+                                sods[i].SetValue("AHardPlace", "");
+                                break;
+                            }
+                        }
+                    }
                     if (ignoredModules.Contains(name))
                     {
                         Debug.LogFormat("[Organization #{0}] Ignored module: '{1}' has been solved", moduleId, name);
@@ -228,10 +244,12 @@ public class OrganizationScript : MonoBehaviour
                         if (Settings.useSwitchVersion)
                             getNewSwitchPos();
                     }
-                    else if (cooldown == true || TwitchAbandonModule.Any(module => module.ModuleDisplayName.Equals(name)))
+                    else if (cooldown == true || TwitchAbandonModule.Any(module => module.ModuleDisplayName.Equals(name)) || sodSolve)
                     {
                         if (cooldown)
                             Debug.LogFormat("[Organization #{0}] '{1}' has been solved, but due to timemode's cooldown the strike will be ignored! Removing from future possibilities...", moduleId, name);
+                        else if (sodSolve)
+                            Debug.LogFormat("[Organization #{0}] '{1}' has been solved, but due to being randomly solved by Sword of Damocles the strike will be ignored! Removing from future possibilities...", moduleId, name);
                         else
                             Debug.LogFormat("[Organization #{0}] '{1}' has been solved, but due to being force solved the strike will be ignored! Removing from future possibilities...", moduleId, name);
                         solved.Add(name);
@@ -746,6 +764,14 @@ public class OrganizationScript : MonoBehaviour
                 }
                 accessCt++;
                 remove.Add(order[i]);
+            }
+            if (order[i].Equals("Sword of Damocles"))
+            {
+                if (announcedSwordOfDamocles == false)
+                {
+                    Debug.LogFormat("[Organization #{0}] Sword of Damocles detected! Making sure to ignore modules solved randomly by this module!", moduleId);
+                    announcedSwordOfDamocles = true;
+                }
             }
         }
         for (int j = 0; j < remove.Count; j++)
