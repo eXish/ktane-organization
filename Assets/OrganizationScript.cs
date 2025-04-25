@@ -822,6 +822,8 @@ public class OrganizationScript : MonoBehaviour
         {
             for (int i = 0; i < backModules.Count(); i++)
             {
+                if ((ttks && ttksBefore.Contains(backModules[i])) || (mm && mysteryModuleKeys.Contains(backModules[i])))
+                    continue;
                 int backCount = 0;
                 for (int j = 0; j < order.Count; j++)
                     if (order[j].Equals(backModules[i]))
