@@ -20,7 +20,7 @@ public class OrganizationScript : MonoBehaviour
     private string[] ignoredModules;
     private string[] backModules = new[] { "The Jewel Vault", "Turtle Robot", "Lightspeed", "Number Nimbleness", "3D Maze", "3D Tunnels", "Bomb Diffusal", "Kudosudoku", "Old Fogey", "Button Grid",
         "Reordered Keys", "Misordered Keys", "Recorded Keys", "Disordered Keys", "Simon Sings", "Vectors", "Game of Life Cruel", "Mastermind Cruel", "Factory Maze", "Simon Sends", "Quintuples",
-        "The Hypercube", "The Ultracube", "Lombax Cubes", "Bamboozling Button", "Simon Stores", "The Cube", "The Sphere", "Ten-Button Color Code", "LEGOs", "Unfair Cipher", "Ultimate Cycle", "Ultimate Cipher", "Bamboozled Again" };
+        "The Hypercube", "The Ultracube", "Lombax Cubes", "Bamboozling Button", "Simon Stores", "The Cube", "The Sphere", "Ten-Button Color Code", "LEGOs", "Unfair Cipher", "Ultimate Cycle", "Ultimate Cipher", "Bamboozled Again", "Sudoku Cipher" };
 
     // Both of these cannot be static since Custom Keys modifies them
     private string[] ttksBefore = { "Morse Code", "Wires", "Two Bits", "The Button", "Colour Flash", "Round Keypad", "Password", "Who's On First", "Crazy Talk", "Keypad", "Listening", "Orientation Cube" };
