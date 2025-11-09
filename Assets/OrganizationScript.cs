@@ -23,7 +23,7 @@ public class OrganizationScript : MonoBehaviour
         "The Hypercube", "The Ultracube", "Lombax Cubes", "Bamboozling Button", "Simon Stores", "The Cube", "The Sphere", "Ten-Button Color Code", "LEGOs", "Unfair Cipher", "Ultimate Cycle", "Ultimate Cipher", "Bamboozled Again" };
 
     private string[] sudokuCipherModules = new[] { "Red Sudoku", "Blue Sudoku", "Green Sudoku", "Yellow Sudoku", 
-        "Pink Sudoku", "Purple Sudoku", "Cyan Sudoku", "Black Sudoku", "White Sudoku", "Orange", "Regular Sudoku" };
+        "Pink Sudoku", "Purple Sudoku", "Cyan Sudoku", "Black Sudoku", "White Sudoku", "Orange Sudoku", "Regular Sudoku" };
     
     // Both of these cannot be static since Custom Keys modifies them
     private string[] ttksBefore = { "Morse Code", "Wires", "Two Bits", "The Button", "Colour Flash", "Round Keypad", "Password", "Who's On First", "Crazy Talk", "Keypad", "Listening", "Orientation Cube" };
@@ -782,7 +782,7 @@ public class OrganizationScript : MonoBehaviour
             {
                 if (announcedSudokuCipher == false)
                 {
-                    Debug.LogFormat("[Organization #{0}] Sudoku Cipher detected! Moving to after any compatible sudoku modules.", moduleId);
+                    Debug.LogFormat("[Organization #{0}] Sudoku Cipher & sudoku modules detected! Keeping this in mind for Organization process!", moduleId);
                     announcedSudokuCipher = true; 
                 }
                 sudokuCipherCt++;
