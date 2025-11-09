@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -22,6 +22,9 @@ public class OrganizationScript : MonoBehaviour
         "Reordered Keys", "Misordered Keys", "Recorded Keys", "Disordered Keys", "Simon Sings", "Vectors", "Game of Life Cruel", "Mastermind Cruel", "Factory Maze", "Simon Sends", "Quintuples",
         "The Hypercube", "The Ultracube", "Lombax Cubes", "Bamboozling Button", "Simon Stores", "The Cube", "The Sphere", "Ten-Button Color Code", "LEGOs", "Unfair Cipher", "Ultimate Cycle", "Ultimate Cipher", "Bamboozled Again" };
 
+    private string[] sudokuCipherModules = new[] { "Red Sudoku", "Blue Sudoku", "Green Sudoku", "Yellow Sudoku", 
+        "Pink Sudoku", "Purple Sudoku", "Cyan Sudoku", "Black Sudoku", "White Sudoku", "Orange", "Regular Sudoku" };
+    
     // Both of these cannot be static since Custom Keys modifies them
     private string[] ttksBefore = { "Morse Code", "Wires", "Two Bits", "The Button", "Colour Flash", "Round Keypad", "Password", "Who's On First", "Crazy Talk", "Keypad", "Listening", "Orientation Cube" };
     private string[] ttksAfter = { "Semaphore", "Combination Lock", "Simon Says", "Astrology", "Switches", "Plumbing", "Maze", "Memory", "Complicated Wires", "Wire Sequence", "Cryptography" };
@@ -59,6 +62,7 @@ public class OrganizationScript : MonoBehaviour
     private bool announcedAccessCodes = false;
     private bool announcedMysteryModule = false;
     private bool announcedSwordOfDamocles = false;
+    private bool announcedSudokuCipher = false;
     private bool otherOrgs = false;
     private bool started = false;
     private bool delayed = false;
@@ -714,6 +718,7 @@ public class OrganizationScript : MonoBehaviour
         bool mm = false;
         bool access = false;
         int accessCt = 0;
+        int sudokuCipherCt = 0;
         order = bomb.GetSolvableModuleNames();
 
         List<string> remove = new List<string>();
@@ -772,6 +777,16 @@ public class OrganizationScript : MonoBehaviour
                     Debug.LogFormat("[Organization #{0}] Sword of Damocles detected! Making sure to ignore modules solved randomly by this module!", moduleId);
                     announcedSwordOfDamocles = true;
                 }
+            }
+            if (order[i].Equals("Sudoku Cipher") && order.Any(m => sudokuCipherModules.Contains(m)))
+            {
+                if (announcedSudokuCipher == false)
+                {
+                    Debug.LogFormat("[Organization #{0}] Sudoku Cipher detected! Moving to after any compatible sudoku modules.", moduleId);
+                    announcedSudokuCipher = true; 
+                }
+                sudokuCipherCt++;
+                remove.Add(order[i]);
             }
         }
         for (int j = 0; j < remove.Count; j++)
@@ -832,6 +847,17 @@ public class OrganizationScript : MonoBehaviour
                     order.Remove(backModules[i]);
                 for (int j = 0; j < backCount; j++)
                     order.Add(backModules[i]);
+            }
+        }
+        
+        //Finds indices of sudoku modules and moves the sudoku ciphers to a random position after the final index
+        if (sudokuCipherCt > 0)
+        {
+            int lastIndex = order.FindLastIndex(m => sudokuCipherModules.Contains(m));
+            for (int i = 0; i < sudokuCipherCt; i++)
+            {
+                int rando = Random.Range(lastIndex + 1, order.Count + 1);
+                order.Insert(rando, "Sudoku Cipher");
             }
         }
 
