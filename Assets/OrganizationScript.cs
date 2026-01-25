@@ -1271,7 +1271,7 @@ public class OrganizationScript : MonoBehaviour
                 {
                     { "Key", "disableTimeModeCooldown" },
                     { "Text", "Disable Time Mode Cooldown" },
-                    { "Description", "Disables the feature of Organization performing a cooldown before its next module (any module may be solved during this time)." }
+                    { "Description", "Disables the feature of Organization performing a cooldown before its next module\n(any module may be solved during this time)." }
                 },
                 new Dictionary<string, object>
                 {
