@@ -1253,27 +1253,31 @@ public class OrganizationScript : MonoBehaviour
         new Dictionary<string, object>
         {
             { "Filename", "OrganizationSettings.json" },
-            { "Name", "Organization Ignore Settings" },
-            { "Listing", new List<Dictionary<string, object>>{
+            { "Name", "Organization Settings" },
+            { "Listings", new List<Dictionary<string, object>>{
                 new Dictionary<string, object>
                 {
                     { "Key", "ignoreSolveBased" },
-                    { "Text", "Have Organization ignore modules that can change answers on solve" }
+                    { "Text", "Ignore Solve Based" },
+                    { "Description", "Have Organization ignore modules that can change answers on solve." }
                 },
                 new Dictionary<string, object>
                 {
                     { "Key", "enableMoveToBack" },
-                    { "Text", "Force modules that may take a long time to solve to appear later in Organization" }
+                    { "Text", "Enable Move To Back" },
+                    { "Description", "Force modules that may take a long time to solve to appear later in Organization." }
                 },
                 new Dictionary<string, object>
                 {
                     { "Key", "disableTimeModeCooldown" },
-                    { "Text", "Disables the feature of Organization performing a cooldown before its next module (any module may be solved during this time)" }
+                    { "Text", "Disable Time Mode Cooldown" },
+                    { "Description", "Disables the feature of Organization performing a cooldown before its next module (any module may be solved during this time)." }
                 },
                 new Dictionary<string, object>
                 {
                     { "Key", "useSwitchVersion" },
-                    { "Text", "Reverts Organization back to its old version which has a switch to check every solve" }
+                    { "Text", "Use Switch Version" },
+                    { "Description", "Reverts Organization back to its old version which has a switch to check every solve." }
                 },
             } }
         }
